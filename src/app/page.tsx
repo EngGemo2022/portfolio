@@ -1,0 +1,2343 @@
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+import { motion, useInView, AnimatePresence, useScroll, useTransform, useSpring, MotionConfig } from "framer-motion";
+import {
+  Palette,
+  Monitor,
+  Smartphone,
+  Brain,
+  Code,
+  Globe,
+  Mail,
+  Phone,
+  MapPin,
+  Linkedin,
+  Download,
+  ExternalLink,
+  MessageCircle,
+  Send,
+  Menu,
+  X,
+  ChevronUp,
+  Sparkles,
+  Layers,
+  PenTool,
+  Figma,
+  Zap,
+  Award,
+  GraduationCap,
+  Languages as LanguagesIcon,
+  Star,
+  ArrowDown,
+  CheckCircle,
+  Sun,
+  Moon,
+  ArrowRight,
+  Calendar,
+  Briefcase,
+  Target,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import Image from "next/image";
+import { ThemeProvider, LanguageProvider, useTheme, useLanguage } from "@/components/providers";
+import { CertificatesSection } from "@/components/certificates-section";
+
+// ============================================
+// UTILITY COMPONENTS & HOOKS
+// ============================================
+
+function AnimatedCounter({ value, suffix = "", duration = 2 }: { value: number; suffix?: string; duration?: number }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (!isInView) return;
+
+    let start = 0;
+    const end = value;
+    const incrementTime = (duration * 1000) / end;
+
+    const timer = setInterval(() => {
+      start += 1;
+      setCount(start);
+      if (start >= end) clearInterval(timer);
+    }, incrementTime);
+
+    return () => clearInterval(timer);
+  }, [isInView, value, duration]);
+
+  return <span ref={ref}>{count}{suffix}</span>;
+}
+
+function MagneticButton({ children, className }: { children: React.ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+
+  const handleMouse = (e: React.MouseEvent) => {
+    if (!ref.current) return;
+    const { clientX, clientY } = e;
+    const { left, top, width, height } = ref.current.getBoundingClientRect();
+    const x = (clientX - left - width / 2) * 0.3;
+    const y = (clientY - top - height / 2) * 0.3;
+    setPosition({ x, y });
+  };
+
+  const reset = () => setPosition({ x: 0, y: 0 });
+
+  return (
+    <motion.div
+      ref={ref}
+      className={className}
+      onMouseMove={handleMouse}
+      onMouseLeave={reset}
+      animate={{ x: position.x, y: position.y }}
+      transition={{ type: "spring", stiffness: 350, damping: 15 }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function TiltCard({ children, className }: { children: React.ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [rotateX, setRotateX] = useState(0);
+  const [rotateY, setRotateY] = useState(0);
+  const [glarePosition, setGlarePosition] = useState({ x: 50, y: 50 });
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    setRotateX((y - centerY) / 10);
+    setRotateY((centerX - x) / 10);
+    setGlarePosition({
+      x: (x / rect.width) * 100,
+      y: (y / rect.height) * 100,
+    });
+  };
+
+  const reset = () => {
+    setRotateX(0);
+    setRotateY(0);
+  };
+
+  return (
+    <motion.div
+      ref={ref}
+      className={`relative ${className}`}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={reset}
+      style={{
+        transformStyle: "preserve-3d",
+        perspective: "1000px",
+      }}
+      animate={{
+        rotateX,
+        rotateY,
+      }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+    >
+      <div
+        className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-30"
+        style={{
+          background: `radial-gradient(circle at ${glarePosition.x}% ${glarePosition.y}%, rgba(212, 175, 55, 0.4), transparent 50%)`,
+        }}
+      />
+      <div style={{ transform: "translateZ(30px)" }}>{children}</div>
+    </motion.div>
+  );
+}
+
+function GradientOrbs() {
+  const { theme } = useTheme();
+  
+  return (
+    <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+      <div className="absolute top-0 left-0 w-full h-full">
+        <div 
+          className="aurora absolute w-[600px] h-[600px] sm:w-[800px] sm:h-[800px] rounded-full opacity-30"
+          style={{
+            background: `radial-gradient(circle, rgba(212, 175, 55, ${theme === "dark" ? 0.3 : 0.15}) 0%, rgba(245, 158, 11, ${theme === "dark" ? 0.1 : 0.05}) 50%, transparent 70%)`,
+            top: "-20%",
+            left: "-10%",
+          }}
+        />
+      </div>
+      <div className="absolute bottom-0 right-0 w-full h-full">
+        <div 
+          className="aurora-2 absolute w-[400px] h-[400px] sm:w-[600px] sm:h-[600px] rounded-full opacity-25"
+          style={{
+            background: `radial-gradient(circle, rgba(251, 191, 36, ${theme === "dark" ? 0.2 : 0.1}) 0%, rgba(212, 175, 55, ${theme === "dark" ? 0.1 : 0.05}) 50%, transparent 70%)`,
+            bottom: "-10%",
+            right: "-5%",
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+function PageLoader() {
+  const { theme } = useTheme();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {loading && (
+        <motion.div
+          className="page-loader"
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="flex flex-col items-center gap-8">
+            <motion.div
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: "spring", stiffness: 200, damping: 15 }}
+              className="text-4xl font-bold gold-gradient-animated"
+            >
+              GH
+            </motion.div>
+            <div className="flex gap-1">
+              {[0, 1, 2, 3, 4].map((i) => (
+                <motion.div
+                  key={i}
+                  className="w-1.5 h-8 bg-[#d4af37] rounded-full"
+                  animate={{
+                    scaleY: [0.4, 1, 0.4],
+                  }}
+                  transition={{
+                    duration: 0.6,
+                    repeat: Infinity,
+                    delay: i * 0.1,
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+function AnimatedSection({
+  children,
+  className = "",
+  id,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  id?: string;
+}) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  return (
+    <motion.section
+      ref={ref}
+      id={id}
+      initial={{ opacity: 0, y: 50 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className={className}
+    >
+      {children}
+    </motion.section>
+  );
+}
+
+function ScrollProgress() {
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+
+  return (
+    <motion.div
+      className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#d4af37] via-[#f59e0b] to-[#fbbf24] origin-left z-50"
+      style={{ scaleX }}
+    />
+  );
+}
+
+// ============================================
+// MAIN COMPONENTS
+// ============================================
+
+function Navigation() {
+  const { t, language, setLanguage, isRTL } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Track which section is in view for the active nav indicator
+  useEffect(() => {
+    const ids = ["about", "skills", "projects", "experience", "education", "certificates", "contact"];
+    const sections = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) setActiveSection(`#${entry.target.id}`);
+        }
+      },
+      { rootMargin: "-35% 0px -55% 0px" }
+    );
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
+  }, []);
+
+  const navLinks = [
+    { href: "#about", label: t.navAbout },
+    { href: "#skills", label: t.navSkills },
+    { href: "#projects", label: t.navProjects },
+    { href: "#experience", label: t.navExperience },
+    { href: "#education", label: t.navEducation },
+    { href: "#certificates", label: t.navCertificates },
+    { href: "#contact", label: t.navContact },
+  ];
+
+  const toggleLanguage = () => {
+    setLanguage(language === "en" ? "ar" : "en");
+  };
+
+  return (
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.6, type: "spring" }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        isScrolled ? "glass py-2 sm:py-3" : "bg-transparent py-3 sm:py-5"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between">
+          <MagneticButton>
+            <motion.a
+              href="#"
+              className="text-xl sm:text-2xl font-bold gold-gradient-animated relative group"
+              whileHover={{ scale: 1.05 }}
+            >
+              {t.navName}
+              <motion.span
+                className={`absolute -bottom-1 h-0.5 bg-gradient-to-r from-[#d4af37] to-[#f59e0b] ${isRTL ? 'right-0' : 'left-0'}`}
+                initial={{ width: 0 }}
+                whileHover={{ width: "100%" }}
+                transition={{ duration: 0.3 }}
+              />
+            </motion.a>
+          </MagneticButton>
+
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex items-center gap-4 xl:gap-8">
+            {navLinks.map((link, index) => (
+              <motion.a
+                key={link.href}
+                href={link.href}
+                aria-current={activeSection === link.href ? "true" : undefined}
+                className={`relative transition-colors duration-300 text-sm font-medium group ${
+                  activeSection === link.href
+                    ? "text-[#d4af37]"
+                    : "text-gray-500 dark:text-gray-300 hover:text-[#d4af37]"
+                }`}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.08 }}
+              >
+                <span className="animated-underline">{link.label}</span>
+                {activeSection === link.href && (
+                  <motion.span
+                    layoutId="nav-active-indicator"
+                    className="absolute -bottom-1.5 left-0 right-0 h-0.5 bg-gradient-to-r from-[#d4af37] to-[#f59e0b] rounded-full"
+                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                  />
+                )}
+              </motion.a>
+            ))}
+            
+            {/* Theme Toggle */}
+            <motion.button
+              onClick={toggleTheme}
+              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              className="flex items-center justify-center w-9 h-9 rounded-full border border-[#d4af37]/30 bg-[#d4af37]/10 hover:bg-[#d4af37]/20 transition-all duration-300"
+              whileHover={{ scale: 1.1, rotate: 15 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <AnimatePresence mode="wait">
+                {theme === "dark" ? (
+                  <motion.div
+                    key="sun"
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                  >
+                    <Sun className="w-4 h-4 text-[#d4af37]" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="moon"
+                    initial={{ rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -90, opacity: 0 }}
+                  >
+                    <Moon className="w-4 h-4 text-[#d4af37]" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
+            
+            {/* Language Switcher */}
+            <motion.button
+              onClick={toggleLanguage}
+              aria-label={language === "en" ? "التبديل إلى العربية" : "Switch to English"}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#d4af37]/30 bg-[#d4af37]/10 hover:bg-[#d4af37]/20 transition-all duration-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Globe className="w-4 h-4 text-[#d4af37]" aria-hidden="true" />
+              <span className="text-sm font-medium text-[#d4af37]">
+                {language === "en" ? "EN" : "AR"}
+              </span>
+            </motion.button>
+
+            {/* Contact CTA */}
+            <motion.a
+              href="#contact"
+              className="hidden xl:inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-[#d4af37] to-[#f59e0b] text-white text-sm font-semibold shadow-md shadow-amber-500/20 hover:shadow-amber-500/40 transition-shadow"
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
+            >
+              {t.contactTitle1} {t.contactTitle2}
+            </motion.a>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="flex lg:hidden items-center gap-2 sm:gap-4">
+            {/* Mobile Theme Toggle */}
+            <motion.button
+              onClick={toggleTheme}
+              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              className="flex items-center justify-center w-8 h-8 rounded-full border border-[#d4af37]/30 bg-[#d4af37]/10"
+              whileTap={{ scale: 0.9 }}
+            >
+              {theme === "dark" ? (
+                <Sun className="w-3.5 h-3.5 text-[#d4af37]" />
+              ) : (
+                <Moon className="w-3.5 h-3.5 text-[#d4af37]" />
+              )}
+            </motion.button>
+            
+            {/* Mobile Language Switcher */}
+            <motion.button
+              onClick={toggleLanguage}
+              aria-label={language === "en" ? "التبديل إلى العربية" : "Switch to English"}
+              className="flex items-center gap-1 px-2 py-1 rounded-full border border-[#d4af37]/30 bg-[#d4af37]/10"
+              whileTap={{ scale: 0.95 }}
+            >
+              <Globe className="w-3 h-3 text-[#d4af37]" aria-hidden="true" />
+              <span className="text-xs font-medium text-[#d4af37]">
+                {language === "en" ? "EN" : "AR"}
+              </span>
+            </motion.button>
+
+            <motion.button
+              className="text-gray-700 dark:text-white p-2"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-nav-menu"
+              whileTap={{ scale: 0.9 }}
+            >
+              <AnimatePresence mode="wait">
+                {isMobileMenuOpen ? (
+                  <motion.div
+                    key="close"
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                  >
+                    <X size={24} />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="menu"
+                    initial={{ rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -90, opacity: 0 }}
+                  >
+                    <Menu size={24} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              id="mobile-nav-menu"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="lg:hidden mt-4 pb-4"
+            >
+              {navLinks.map((link, index) => (
+                <motion.a
+                  key={link.href}
+                  href={link.href}
+                  className="block py-3 text-gray-600 dark:text-gray-300 hover:text-[#d4af37] transition-colors border-b border-[#d4af37]/10 dark:border-[#d4af37]/10"
+                  initial={{ opacity: 0, x: isRTL ? 20 : -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {link.label}
+                </motion.a>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </motion.nav>
+  );
+}
+
+function HeroSection() {
+  const { t, isRTL, language } = useLanguage();
+  const { theme } = useTheme();
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 500], [0, 120]);
+  const opacity = useTransform(scrollY, [0, 300], [1, 0]);
+
+  const stats = [
+    { value: "3+", label: t.aboutYearsExperience },
+    { value: "50+", label: t.aboutProjectsDone },
+    { value: "30+", label: t.aboutHappyClients },
+  ];
+
+  const roles = [t.heroTitle1, t.heroTitle2, "Brand Identity Designer"];
+  const [roleIdx, setRoleIdx] = useState(0);
+  useEffect(() => {
+    const timer = setInterval(() => setRoleIdx(i => (i + 1) % roles.length), 3000);
+    return () => clearInterval(timer);
+  }, [roles.length]);
+
+  return (
+    <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16 sm:pt-20">
+      {/* Background */}
+      <motion.div
+        className={`absolute inset-0 ${theme === "dark"
+          ? "bg-[#080808]"
+          : "bg-[#fafafa]"}`}
+        style={{ y, opacity }}
+      />
+
+      {/* Grid overlay */}
+      <div className="absolute inset-0 grid-pattern opacity-20" />
+
+      {/* Large blurred accent orbs */}
+      <div className="absolute -top-40 -left-40 w-[700px] h-[700px] rounded-full opacity-20 pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(212,175,55,0.4) 0%, transparent 70%)", filter: "blur(80px)" }} />
+      <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full opacity-15 pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(245,158,11,0.3) 0%, transparent 70%)", filter: "blur(100px)" }} />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+        <div className={`grid lg:grid-cols-2 gap-12 lg:gap-16 items-center py-12 lg:py-0 ${isRTL ? "lg:flex-row-reverse" : ""}`}>
+
+          {/* ===== LEFT: TEXT CONTENT ===== */}
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { opacity: 1, transition: { staggerChildren: 0.12, delayChildren: 0.2 } },
+            }}
+            className={`${isRTL ? "lg:order-2 text-right" : "lg:order-1 text-left"} text-center lg:text-left`}
+          >
+            {/* Available badge */}
+            <motion.div
+              variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}
+              className={`mb-5 ${isRTL ? "flex justify-center lg:justify-end" : "flex justify-center lg:justify-start"}`}
+            >
+              <span className="frosted-badge">
+                <motion.span
+                  animate={{ scale: [1, 1.3, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="w-2 h-2 rounded-full bg-emerald-400 inline-block"
+                />
+                {t.heroAvailable}
+              </span>
+            </motion.div>
+
+            {/* Main headline */}
+            <motion.div
+              variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } }}
+              className="mb-4"
+            >
+              <h1 className="font-display heading-xl text-gray-900 dark:text-white">
+                <span className="block">Gamal</span>
+                <span className="block hero-gradient-text">Abdlhafez</span>
+              </h1>
+            </motion.div>
+
+            {/* Animated role */}
+            <motion.div
+              variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}
+              className="mb-6 h-8 overflow-hidden"
+            >
+              <AnimatePresence mode="wait">
+                <motion.p
+                  key={roleIdx}
+                  initial={{ y: 32, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -32, opacity: 0 }}
+                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  className="text-lg sm:text-xl font-medium text-[#d4af37]"
+                >
+                  — {roles[roleIdx]}
+                </motion.p>
+              </AnimatePresence>
+            </motion.div>
+
+            {/* Description */}
+            <motion.p
+              variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}
+              className="text-base sm:text-lg text-gray-500 dark:text-gray-400 mb-8 max-w-lg leading-relaxed"
+            >
+              {t.heroDescription1}
+            </motion.p>
+
+            {/* CTAs */}
+            <motion.div
+              variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}
+              className={`flex flex-wrap gap-3 mb-8 ${isRTL ? "justify-center lg:justify-end" : "justify-center lg:justify-start"}`}
+            >
+              <MagneticButton>
+                <motion.a
+                  href="#projects"
+                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-gradient-to-r from-[#d4af37] to-[#f59e0b] text-white font-semibold text-sm shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 transition-shadow"
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <Layers className="w-4 h-4" />
+                  {t.heroViewProjects}
+                </motion.a>
+              </MagneticButton>
+              <MagneticButton>
+                <motion.a
+                  href="#contact"
+                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-[#d4af37]/40 text-[#d4af37] font-semibold text-sm hover:bg-[#d4af37]/8 transition-colors"
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <Mail className="w-4 h-4" />
+                  {t.heroContactMe}
+                </motion.a>
+              </MagneticButton>
+              <MagneticButton>
+                <motion.a
+                  href={language === "ar" ? "/cv/gamal-hamood-cv-ar.pdf" : "/cv/gamal-hamood-cv.pdf"}
+                  download
+                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 font-semibold text-sm hover:border-[#d4af37]/40 hover:text-[#d4af37] transition-colors"
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <Download className="w-4 h-4" />
+                  {t.heroDownloadCV}
+                </motion.a>
+              </MagneticButton>
+            </motion.div>
+
+            {/* Location + WhatsApp */}
+            <motion.div
+              variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
+              className={`flex flex-wrap items-center gap-5 text-sm text-gray-400 ${isRTL ? "justify-center lg:justify-end" : "justify-center lg:justify-start"}`}
+            >
+              <span className="flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-[#d4af37]" />
+                {t.heroLocation}
+              </span>
+              <span className="w-px h-4 bg-gray-200 dark:bg-white/10" />
+              <motion.a
+                href="https://wa.me/966552962213"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 hover:text-green-400 transition-colors"
+                whileHover={{ x: 3 }}
+              >
+                <MessageCircle className="w-3.5 h-3.5" />
+                {t.heroWhatsAppMe}
+              </motion.a>
+            </motion.div>
+          </motion.div>
+
+          {/* ===== RIGHT: PROFILE + STATS ===== */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, x: isRTL ? -40 : 40 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            transition={{ duration: 1, delay: 0.4, type: "spring", damping: 20 }}
+            className={`flex flex-col items-center gap-8 ${isRTL ? "lg:order-1" : "lg:order-2"}`}
+          >
+            {/* Profile image with premium frame */}
+            <div className="relative">
+              {/* Rotating rings */}
+              <motion.div
+                className="absolute inset-0 rounded-3xl border border-[#d4af37]/20"
+                style={{ scale: 1.08 }}
+                animate={{ rotate: 360 }}
+                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+              />
+              <motion.div
+                className="absolute inset-0 rounded-3xl border border-[#d4af37]/10"
+                style={{ scale: 1.16 }}
+                animate={{ rotate: -360 }}
+                transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
+              />
+
+              {/* Glow */}
+              <motion.div
+                className="absolute inset-0 rounded-3xl opacity-30 blur-3xl"
+                style={{ background: "radial-gradient(circle, rgba(212,175,55,0.6) 0%, transparent 70%)" }}
+                animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.35, 0.2] }}
+                transition={{ duration: 4, repeat: Infinity }}
+              />
+
+              {/* Image */}
+              <motion.div
+                className="relative w-56 sm:w-72 lg:w-80 aspect-[1058/1487] rounded-3xl overflow-hidden"
+                whileHover={{ scale: 1.03 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                style={{
+                  boxShadow: "0 32px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(212,175,55,0.2)",
+                }}
+              >
+                <Image
+                  src="/images/profile.jpg"
+                  alt="Gamal Abdlhafez Hamood"
+                  fill
+                  className="object-cover"
+                  priority
+                />
+                {/* Overlay gradient on image */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
+              </motion.div>
+
+              {/* Badge floating top-right */}
+              <motion.div
+                className="absolute -top-3 -right-3 glass rounded-2xl px-3 py-2 flex items-center gap-2"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.2 }}
+                whileHover={{ scale: 1.05 }}
+              >
+                <Award className="w-4 h-4 text-[#d4af37]" />
+                <span className="text-xs font-semibold text-gray-800 dark:text-white">Creative Designer</span>
+              </motion.div>
+            </div>
+
+            {/* Stats row */}
+            <div className="flex gap-6 sm:gap-10">
+              {stats.map((stat, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8 + i * 0.15 }}
+                  className="text-center"
+                >
+                  <div className="text-2xl sm:text-3xl font-bold gold-gradient-animated font-display">{stat.value}</div>
+                  <div className="text-xs text-gray-400 mt-0.5 whitespace-nowrap">{stat.label}</div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+      >
+        <motion.a
+          href="#about"
+          className="flex flex-col items-center gap-2 text-gray-400 hover:text-[#d4af37] transition-colors"
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity }}
+        >
+          <span className="section-label">{t.heroScrollDown}</span>
+          <ArrowDown className="w-4 h-4" />
+        </motion.a>
+      </motion.div>
+    </section>
+  );
+}
+
+function AboutSection() {
+  const { t, isRTL } = useLanguage();
+  const { theme } = useTheme();
+  
+  const highlights = [
+    { icon: Palette, label: t.aboutGraphicDesign, color: "from-[#d4af37] to-[#f59e0b]" },
+    { icon: Monitor, label: t.aboutSocialMediaDesign, color: "from-[#f59e0b] to-[#fbbf24]" },
+    { icon: Globe, label: t.aboutWebsiteDesign, color: "from-[#fbbf24] to-[#d4af37]" },
+    { icon: Smartphone, label: t.aboutResponsiveUI, color: "from-[#d4af37] to-[#f59e0b]" },
+    { icon: Brain, label: t.aboutAIWorkflows, color: "from-[#f59e0b] to-[#fbbf24]" },
+    { icon: Code, label: t.aboutFrontendDev, color: "from-[#fbbf24] to-[#d4af37]" },
+    { icon: Zap, label: t.aboutAdaptability, color: "from-[#d4af37] to-[#f59e0b]" },
+    { icon: MessageCircle, label: t.aboutCommunication, color: "from-[#f59e0b] to-[#fbbf24]" },
+  ];
+
+  const stats = [
+    { value: 3, suffix: "+", label: t.aboutYearsExperience },
+    { value: 50, suffix: "+", label: t.aboutProjectsDone },
+    { value: 30, suffix: "+", label: t.aboutHappyClients },
+  ];
+
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  return (
+    <AnimatedSection id="about" className="py-16 sm:py-24 relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          ref={ref}
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12 sm:mb-16"
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={isInView ? { scale: 1 } : {}}
+            transition={{ type: "spring", stiffness: 200 }}
+          >
+            <Badge className="bg-[#d4af37]/10 text-[#d4af37] border-[#d4af37]/30 mb-4 text-sm px-4 py-1">
+              <Sparkles className="w-3 h-3 mr-2" />
+              {t.aboutBadge}
+            </Badge>
+          </motion.div>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            {t.aboutTitle1} <span className="gold-gradient-animated">{t.aboutTitle2}</span>
+          </h2>
+        </motion.div>
+
+        <div className={`grid lg:grid-cols-2 gap-8 lg:gap-12 items-center ${isRTL ? 'lg:flex-row-reverse' : ''}`}>
+          <motion.div
+            initial={{ opacity: 0, x: isRTL ? 50 : -50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className={`space-y-4 sm:space-y-6 ${isRTL ? 'lg:order-2 lg:text-right' : 'lg:order-1'}`}
+          >
+            <p className="text-gray-700 dark:text-gray-300 text-base sm:text-lg leading-relaxed">
+              {t.aboutPara1}
+            </p>
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm sm:text-base">
+              {t.aboutPara2}
+            </p>
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm sm:text-base">
+              {t.aboutPara3}
+            </p>
+
+            <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-4 sm:pt-6">
+              {stats.map((stat, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ delay: 0.4 + i * 0.1 }}
+                  className="text-center p-3 sm:p-4 rounded-xl bg-gray-50 dark:bg-gray-900 border border-[#d4af37]/20"
+                >
+                  <div className="text-xl sm:text-2xl font-bold gold-gradient-animated">
+                    <AnimatedCounter value={stat.value} suffix={stat.suffix} />
+                  </div>
+                  <div className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">{stat.label}</div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: isRTL ? -50 : 50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className={`grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 ${isRTL ? 'lg:order-1' : 'lg:order-2'}`}
+          >
+            {highlights.map((item, index) => (
+              <TiltCard key={index}>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={isInView ? { opacity: 1, scale: 1 } : {}}
+                  transition={{ delay: 0.2 + index * 0.1 }}
+                  whileHover={{ scale: 1.05 }}
+                  className="group bg-gray-50 dark:bg-gray-900 border border-[#d4af37]/20 rounded-xl p-3 sm:p-4 text-center card-hover h-full"
+                >
+                  <motion.div
+                    className={`w-10 sm:w-12 h-10 sm:h-12 mx-auto mb-2 sm:mb-3 rounded-xl bg-gradient-to-br ${item.color} p-0.5`}
+                    whileHover={{ rotate: [0, -10, 10, 0] }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <div className={`w-full h-full rounded-[10px] flex items-center justify-center ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}>
+                      <item.icon className="w-5 sm:w-6 h-5 sm:h-6 text-[#d4af37]" />
+                    </div>
+                  </motion.div>
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-medium group-hover:text-[#d4af37] transition-colors">
+                    {item.label}
+                  </p>
+                </motion.div>
+              </TiltCard>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+    </AnimatedSection>
+  );
+}
+
+function SkillsSection() {
+  const { t, isRTL } = useLanguage();
+  const { theme } = useTheme();
+  
+  const skillCategories = [
+    {
+      title: t.skillsDesign,
+      icon: Palette,
+      color: "#d4af37",
+      skills: [
+        t.skillGraphicDesign,
+        t.skillSocialMediaDesign,
+        t.skillWebsiteDesign,
+        t.skillUIUX,
+        t.skillResponsiveWeb,
+        t.skillPhotoshop,
+        t.skillIllustrator,
+        t.skillInDesign,
+        t.skillCanva,
+      ],
+    },
+    {
+      title: t.skillsDevelopment,
+      icon: Code,
+      color: "#f59e0b",
+      skills: [
+        t.skillHTML,
+        t.skillCSS,
+        t.skillJavaScript,
+        t.skillReact,
+        t.skillBootstrap,
+        t.skillPHP,
+        t.skillLaravel,
+        t.skillMySQL,
+        t.skillAPIs,
+      ],
+    },
+    {
+      title: t.skillsTools,
+      icon: Layers,
+      color: "#fbbf24",
+      skills: [
+        t.skillAIPrompt,
+        t.skillGit,
+        t.skillWord,
+        t.skillExcel,
+        t.skillPowerPoint,
+        t.skillAccess,
+      ],
+    },
+    {
+      title: t.skillsProfessional,
+      icon: Award,
+      color: "#d4af37",
+      skills: [
+        t.skillProblemSolving,
+        t.skillTimeManagement,
+        t.skillTeamCoordination,
+        t.skillClientSupport,
+        t.skillCommunication,
+        t.skillFastLearning,
+      ],
+    },
+  ];
+
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  return (
+    <AnimatedSection id="skills" className={`py-16 sm:py-24 relative ${theme === "dark" ? "bg-[#0a0a0a]" : "bg-gray-50"}`}>
+      <div className="absolute inset-0 grid-pattern opacity-20" />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <motion.div
+          ref={ref}
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          className="text-center mb-12 sm:mb-16"
+        >
+          <Badge className="bg-[#d4af37]/10 text-[#d4af37] border-[#d4af37]/30 mb-4">
+            <Sparkles className="w-3 h-3 mr-2" />
+            {t.skillsBadge}
+          </Badge>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            {t.skillsTitle1} <span className="gold-gradient-animated">{t.skillsTitle2}</span>
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-sm sm:text-base">
+            {t.skillsDescription}
+          </p>
+        </motion.div>
+
+        <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
+          {skillCategories.map((category, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 50 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: index * 0.15 }}
+              className="group"
+            >
+              <TiltCard>
+                <div className={`rounded-2xl p-4 sm:p-6 card-hover h-full border border-[#d4af37]/20 ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}>
+                  <div className={`flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <motion.div
+                      className="w-10 sm:w-14 h-10 sm:h-14 rounded-xl flex items-center justify-center relative overflow-hidden shrink-0"
+                      style={{ background: `linear-gradient(135deg, ${category.color}20, ${category.color}10)` }}
+                      whileHover={{ scale: 1.1 }}
+                    >
+                      <motion.div
+                        className="absolute inset-0"
+                        style={{
+                          background: `linear-gradient(135deg, ${category.color}40, transparent)`,
+                        }}
+                        initial={{ x: "-100%" }}
+                        whileHover={{ x: "100%" }}
+                        transition={{ duration: 0.5 }}
+                      />
+                      <category.icon className="w-5 sm:w-7 h-5 sm:h-7 relative z-10" style={{ color: category.color }} />
+                    </motion.div>
+                    <div className={isRTL ? 'text-right' : ''}>
+                      <h3 className="text-base sm:text-xl font-semibold text-gray-900 dark:text-white group-hover:text-[#d4af37] transition-colors">
+                        {category.title}
+                      </h3>
+                      <p className="text-gray-500 text-xs sm:text-sm">{category.skills.length} {t.skillsCount}</p>
+                    </div>
+                  </div>
+
+                  <ul className={`flex flex-wrap gap-2 list-none p-0 m-0 ${isRTL ? 'justify-end' : ''}`}>
+                    {category.skills.map((skill, skillIndex) => (
+                      <motion.li
+                        key={skillIndex}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={isInView ? { opacity: 1, y: 0 } : {}}
+                        transition={{ delay: 0.25 + skillIndex * 0.04, duration: 0.4 }}
+                      >
+                        <span
+                          className="skill-pill border text-gray-600 dark:text-gray-300"
+                          style={{
+                            borderColor: `${category.color}30`,
+                            background: `${category.color}0d`,
+                          }}
+                        >
+                          <span
+                            className="w-1.5 h-1.5 rounded-full shrink-0"
+                            style={{ background: category.color }}
+                            aria-hidden="true"
+                          />
+                          {skill}
+                        </span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </div>
+              </TiltCard>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </AnimatedSection>
+  );
+}
+
+function ProjectsSection() {
+  const { t, isRTL } = useLanguage();
+  const { theme } = useTheme();
+  
+  const projects = [
+    {
+      title: "Sky Najd",
+      image: "/images/projects/skynajd.png",
+      link: "https://skynajd.com/",
+      description: t.projectSkyNajdDesc,
+      role: t.projectSkyNajdRole,
+      tags: [t.projectTagWebsite, t.projectTagBranding, t.projectTagUIDesign],
+    },
+    {
+      title: "Dahanat KSA",
+      image: "/images/projects/dahanatksa.png",
+      link: "https://dahanatksa.com/",
+      description: t.projectDahanatDesc,
+      role: t.projectDahanatRole,
+      tags: [t.projectTagECommerce, t.projectTagResponsive, t.projectTagModern],
+    },
+    {
+      title: "Jarash",
+      image: "/images/projects/jarash.png",
+      link: "https://jarash.gt.tc/",
+      description: t.projectJarashDesc,
+      role: t.projectJarashRole,
+      tags: [t.projectTagFrontend, t.projectTagUX, t.projectTagResponsive],
+    },
+  ];
+
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  return (
+    <AnimatedSection id="projects" className="py-16 sm:py-24 relative">
+      <div className="absolute inset-0 grid-pattern opacity-10" />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <motion.div
+          ref={ref}
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          className="text-center mb-12 sm:mb-16"
+        >
+          <Badge className="bg-[#d4af37]/10 text-[#d4af37] border-[#d4af37]/30 mb-4">
+            <Sparkles className="w-3 h-3 mr-2" />
+            {t.projectsBadge}
+          </Badge>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            {t.projectsTitle1} <span className="gold-gradient-animated">{t.projectsTitle2}</span>
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-sm sm:text-base">
+            {t.projectsDescription}
+          </p>
+        </motion.div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          {projects.map((project, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 50 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: index * 0.2 }}
+            >
+              <TiltCard>
+                <motion.div
+                  className={`group rounded-2xl overflow-hidden project-card-hover relative border border-[#d4af37]/20 ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}
+                  whileHover={{ y: -10 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <div className="relative h-48 sm:h-56 overflow-hidden">
+                    <motion.div
+                      className="absolute inset-0"
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ duration: 0.6 }}
+                    >
+                      <Image
+                        src={project.image}
+                        alt={project.title}
+                        fill
+                        className="object-cover"
+                      />
+                    </motion.div>
+                    <div className={`absolute inset-0 bg-gradient-to-t ${theme === "dark" ? "from-gray-900" : "from-white"} via-transparent to-transparent`} />
+                    
+                    <div className={`absolute top-4 ${isRTL ? 'left-4' : 'right-4'} flex gap-2 flex-wrap`}>
+                      {project.tags.map((tag, i) => (
+                        <motion.span
+                          key={i}
+                          initial={{ opacity: 0, scale: 0 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: 0.5 + i * 0.1 }}
+                          className="text-xs px-2 py-1 bg-black/50 dark:bg-black/80 backdrop-blur-sm text-[#d4af37] rounded-full border border-[#d4af37]/30"
+                        >
+                          {tag}
+                        </motion.span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="p-4 sm:p-6 relative">
+                    <motion.h3
+                      className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-[#d4af37] transition-colors"
+                      layout
+                    >
+                      {project.title}
+                    </motion.h3>
+                    <p className="text-xs sm:text-sm text-[#d4af37] mb-2 sm:mb-3">{project.role}</p>
+                    <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm mb-4 line-clamp-3">
+                      {project.description}
+                    </p>
+                    
+                    <Button
+                      asChild
+                      className="w-full bg-transparent border-2 border-[#d4af37] text-[#d4af37] hover:bg-[#d4af37] hover:text-white font-semibold group/btn text-sm transition-all duration-300"
+                    >
+                      <a
+                        href={project.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <ExternalLink className={`w-4 h-4 group-hover/btn:rotate-45 transition-transform ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                        {t.projectVisitWebsite}
+                      </a>
+                    </Button>
+                  </div>
+                </motion.div>
+              </TiltCard>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </AnimatedSection>
+  );
+}
+
+// Graphic Design Works Section with Infinite Scrolling Carousel
+function GraphicDesignWorksSection() {
+  const { t, isRTL } = useLanguage();
+  const { theme } = useTheme();
+  const [selectedDesign, setSelectedDesign] = useState<number | null>(null);
+  
+  const designs = [
+    {
+      image: "/images/designs/logo-real-estate.png",
+      title: t.designLogoRealEstate,
+      description: t.designLogoRealEstateDesc,
+      category: "Logo Design",
+      color: "#d4af37",
+    },
+    {
+      image: "/images/designs/logo-abaya-shop.png",
+      title: t.designLogoAbaya,
+      description: t.designLogoAbayaDesc,
+      category: "Brand Identity",
+      color: "#60a5fa",
+    },
+    {
+      image: "/images/designs/logo-coffee.png",
+      title: t.designLogoCoffee,
+      description: t.designLogoCoffeeDesc,
+      category: "Logo Design",
+      color: "#92400e",
+    },
+    {
+      image: "/images/designs/logo-lawyer.png",
+      title: t.designLogoLawyer,
+      description: t.designLogoLawyerDesc,
+      category: "Brand Identity",
+      color: "#3b82f6",
+    },
+    {
+      image: "/images/designs/logo-skincare.png",
+      title: t.designLogoSkincare,
+      description: t.designLogoSkincareDesc,
+      category: "Logo Design",
+      color: "#a855f7",
+    },
+    {
+      image: "/images/designs/logo-magnet-creative.png",
+      title: t.designLogoMagnetCreative,
+      description: t.designLogoMagnetCreativeDesc,
+      category: "Brand Identity",
+      color: "#3b82f6",
+    },
+  ];
+
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  // Keyboard support + scroll lock while the design lightbox is open
+  const designCount = designs.length;
+  useEffect(() => {
+    if (selectedDesign === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedDesign(null);
+      else if (e.key === "ArrowRight") setSelectedDesign((p) => (p !== null ? (p + 1) % designCount : 0));
+      else if (e.key === "ArrowLeft") setSelectedDesign((p) => (p !== null ? (p - 1 + designCount) % designCount : 0));
+    };
+    document.addEventListener("keydown", onKey);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [selectedDesign, designCount]);
+
+  return (
+    <AnimatedSection id="designs" className={`py-16 sm:py-24 relative overflow-hidden ${theme === "dark" ? "bg-[#0a0a0a]" : "bg-gray-50"}`}>
+      <div className="absolute inset-0 grid-pattern opacity-10" />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <motion.div
+          ref={ref}
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          className="text-center mb-12 sm:mb-16"
+        >
+          <Badge className="bg-[#d4af37]/10 text-[#d4af37] border-[#d4af37]/30 mb-4">
+            <Sparkles className="w-3 h-3 mr-2" />
+            {t.designBadge}
+          </Badge>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            {t.designTitle1} <span className="gold-gradient-animated">{t.designTitle2}</span>
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-sm sm:text-base">
+            {t.designDescription}
+          </p>
+        </motion.div>
+      </div>
+
+      {/* Infinite Scrolling Carousel */}
+      <div className="relative w-full overflow-hidden">
+        {/* Gradient Overlays */}
+        <div className={`absolute left-0 top-0 bottom-0 w-20 sm:w-40 z-10 pointer-events-none ${theme === "dark" ? "bg-gradient-to-r from-[#0a0a0a]" : "bg-gradient-to-r from-gray-50"}`} />
+        <div className={`absolute right-0 top-0 bottom-0 w-20 sm:w-40 z-10 pointer-events-none ${theme === "dark" ? "bg-gradient-to-l from-[#0a0a0a]" : "bg-gradient-to-l from-gray-50"}`} />
+        
+        {/* Scrolling Container */}
+        <motion.div
+          className="flex gap-4 sm:gap-6 py-4"
+          animate={{
+            x: isRTL ? [0, 7500] : [0, -7500],
+          }}
+          transition={{
+            x: {
+              duration: 120,
+              repeat: Infinity,
+              ease: "linear",
+            },
+          }}
+          style={{
+            width: "fit-content",
+          }}
+        >
+          {/* Duplicate items for seamless loop */}
+          {[...designs, ...designs, ...designs].map((design, index) => (
+            <motion.div
+              key={index}
+              className="group relative flex-shrink-0 cursor-pointer"
+              whileHover={{ scale: 1.05, y: -10 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              onClick={() => setSelectedDesign(index % designs.length)}
+            >
+              <div className={`w-64 sm:w-72 lg:w-80 h-48 sm:h-56 lg:h-64 rounded-2xl overflow-hidden border-2 border-[#d4af37]/20 transition-all duration-500 group-hover:border-[#d4af37]/60 ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}
+                style={{
+                  boxShadow: theme === "dark" 
+                    ? "0 10px 40px rgba(0,0,0,0.3)" 
+                    : "0 10px 40px rgba(0,0,0,0.1)",
+                }}
+              >
+                {/* Glow Effect on Hover */}
+                <motion.div
+                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{
+                    background: `radial-gradient(circle at center, ${design.color}20, transparent 70%)`,
+                  }}
+                />
+                
+                <div className="relative w-full h-full">
+                  <Image
+                    src={design.image}
+                    alt={design.title}
+                    fill
+                    className="object-contain p-4 sm:p-6 transition-transform duration-500 group-hover:scale-110"
+                  />
+                </div>
+                
+                {/* Category Badge */}
+                <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
+                  <span className="text-xs px-2 sm:px-3 py-1 rounded-full bg-black/50 backdrop-blur-sm text-[#d4af37] border border-[#d4af37]/30">
+                    {design.category}
+                  </span>
+                </div>
+                
+                {/* View Icon */}
+                <motion.div
+                  className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  initial={{ scale: 0.8 }}
+                  whileHover={{ scale: 1 }}
+                >
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#d4af37]/90 flex items-center justify-center backdrop-blur-sm">
+                    <ExternalLink className="w-5 sm:w-6 h-5 sm:h-6 text-white" />
+                  </div>
+                </motion.div>
+              </div>
+              
+              {/* Title below card */}
+              <div className="mt-3 sm:mt-4 text-center px-2">
+                <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white group-hover:text-[#d4af37] transition-colors truncate">
+                  {design.title}
+                </h3>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Navigation Dots */}
+      <div className="flex justify-center gap-2 mt-8">
+        {designs.map((design, index) => (
+          <motion.button
+            key={index}
+            type="button"
+            aria-label={`${t.designViewProject}: ${design.title}`}
+            className="w-2.5 h-2.5 rounded-full bg-[#d4af37]/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d4af37]"
+            whileHover={{ scale: 1.5, backgroundColor: "#d4af37" }}
+            onClick={() => setSelectedDesign(index)}
+          />
+        ))}
+      </div>
+
+      {/* Lightbox Modal */}
+      <AnimatePresence>
+        {selectedDesign !== null && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8"
+            onClick={() => setSelectedDesign(null)}
+          >
+            {/* Backdrop */}
+            <motion.div
+              className="absolute inset-0 bg-black/80 backdrop-blur-lg"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            />
+            
+            {/* Modal Content */}
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-label={designs[selectedDesign].title}
+              initial={{ scale: 0.8, opacity: 0, y: 50 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0, y: 50 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              className={`relative max-w-4xl w-full rounded-3xl overflow-hidden border border-[#d4af37]/30 ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close Button */}
+              <motion.button
+                aria-label={t.designClose}
+                className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white hover:bg-[#d4af37] transition-colors"
+                whileHover={{ scale: 1.1, rotate: 90 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setSelectedDesign(null)}
+              >
+                <X className="w-5 h-5" aria-hidden="true" />
+              </motion.button>
+              
+              {/* Image */}
+              <div className="relative w-full aspect-video sm:aspect-[16/10]">
+                <Image
+                  src={designs[selectedDesign].image}
+                  alt={designs[selectedDesign].title}
+                  fill
+                  className="object-contain p-6 sm:p-10"
+                />
+              </div>
+              
+              {/* Info */}
+              <div className="p-4 sm:p-6 border-t border-[#d4af37]/20">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-xs px-3 py-1 rounded-full bg-[#d4af37]/10 text-[#d4af37] border border-[#d4af37]/30">
+                    {designs[selectedDesign].category}
+                  </span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                  {designs[selectedDesign].title}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+                  {designs[selectedDesign].description}
+                </p>
+              </div>
+              
+              {/* Navigation Arrows */}
+              <motion.button
+                aria-label={t.certPrev}
+                className={`absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white hover:bg-[#d4af37] transition-colors ${isRTL ? 'right-2 sm:right-4 left-auto' : ''}`}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedDesign((prev) => prev !== null ? (prev - 1 + designs.length) % designs.length : 0);
+                }}
+              >
+                <ChevronUp className={`w-5 sm:w-6 h-5 sm:h-6 ${isRTL ? '' : '-rotate-90'}`} />
+              </motion.button>
+              <motion.button
+                aria-label={t.certNext}
+                className={`absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white hover:bg-[#d4af37] transition-colors ${isRTL ? 'left-2 sm:left-4 right-auto' : ''}`}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedDesign((prev) => prev !== null ? (prev + 1) % designs.length : 0);
+                }}
+              >
+                <ChevronUp className={`w-5 sm:w-6 h-5 sm:h-6 ${isRTL ? 'rotate-90' : 'rotate-90'}`} />
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </AnimatedSection>
+  );
+}
+
+// New Impressive Experience Section
+function ExperienceSection() {
+  const { t, isRTL } = useLanguage();
+  const { theme } = useTheme();
+  
+  const experiences = [
+    { 
+      icon: Monitor, 
+      title: t.expUIWeb, 
+      description: "Creating intuitive and visually appealing web interfaces",
+      color: "#d4af37",
+      gradient: "from-[#d4af37] to-[#f59e0b]"
+    },
+    { 
+      icon: Palette, 
+      title: t.expGraphicDesign, 
+      description: "Brand identity, marketing materials, and visual communication",
+      color: "#f59e0b",
+      gradient: "from-[#f59e0b] to-[#fbbf24]"
+    },
+    { 
+      icon: Smartphone, 
+      title: t.expResponsiveWebsites, 
+      description: "Mobile-first designs that work flawlessly across all devices",
+      color: "#fbbf24",
+      gradient: "from-[#fbbf24] to-[#d4af37]"
+    },
+    { 
+      icon: Target, 
+      title: t.expUsability, 
+      description: "Optimizing user flows and improving conversion rates",
+      color: "#d4af37",
+      gradient: "from-[#d4af37] to-[#f59e0b]"
+    },
+    { 
+      icon: Figma, 
+      title: t.expInterface, 
+      description: "Clean, organized, and scalable UI components",
+      color: "#f59e0b",
+      gradient: "from-[#f59e0b] to-[#fbbf24]"
+    },
+    { 
+      icon: Layers, 
+      title: t.expBranding, 
+      description: "Visual storytelling that strengthens brand identity",
+      color: "#fbbf24",
+      gradient: "from-[#fbbf24] to-[#d4af37]"
+    },
+  ];
+
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  return (
+    <AnimatedSection id="experience" className={`py-16 sm:py-24 relative ${theme === "dark" ? "bg-[#0a0a0a]" : "bg-gray-50"}`}>
+      <div className="absolute inset-0 grid-pattern opacity-15" />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <motion.div
+          ref={ref}
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          className="text-center mb-12 sm:mb-16"
+        >
+          <Badge className="bg-[#d4af37]/10 text-[#d4af37] border-[#d4af37]/30 mb-4">
+            <Sparkles className="w-3 h-3 mr-2" />
+            {t.experienceBadge}
+          </Badge>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            {t.experienceTitle1} <span className="gold-gradient-animated">{t.experienceTitle2}</span>
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-2 text-sm sm:text-base">
+            {t.experienceSubtitle}
+          </p>
+        </motion.div>
+
+        {/* Experience Cards Grid */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          {experiences.map((exp, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 50, scale: 0.9 }}
+              animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+              transition={{ delay: index * 0.1, duration: 0.5 }}
+            >
+              <motion.div
+                className={`group relative rounded-2xl p-5 sm:p-6 overflow-hidden border border-[#d4af37]/20 ${
+                  theme === "dark" ? "bg-gray-900/50" : "bg-white"
+                }`}
+                whileHover={{ y: -8, scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                {/* Gradient background on hover */}
+                <motion.div
+                  className={`absolute inset-0 bg-gradient-to-br ${exp.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}
+                />
+                
+                {/* Animated border */}
+                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                  <div className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${exp.gradient} p-[1px]`}>
+                    <div className={`w-full h-full rounded-2xl ${theme === "dark" ? "bg-gray-900" : "bg-white"}`} />
+                  </div>
+                </div>
+                
+                {/* Content */}
+                <div className="relative z-10">
+                  <div className={`flex items-start gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <motion.div
+                      className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center shrink-0 relative overflow-hidden"
+                      style={{ background: `linear-gradient(135deg, ${exp.color}20, ${exp.color}10)` }}
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                      transition={{ type: "spring", stiffness: 400 }}
+                    >
+                      <motion.div
+                        className="absolute inset-0"
+                        style={{ background: `radial-gradient(circle at center, ${exp.color}30, transparent)` }}
+                        animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      />
+                      <exp.icon className="w-6 h-6 sm:w-7 sm:h-7 relative z-10" style={{ color: exp.color }} />
+                    </motion.div>
+                    
+                    <div className={`flex-1 ${isRTL ? 'text-right' : ''}`}>
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white group-hover:text-[#d4af37] transition-colors mb-1 sm:mb-2">
+                        {exp.title}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                        {exp.description}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Arrow indicator */}
+                  <motion.div
+                    className={`absolute bottom-4 ${isRTL ? 'left-4' : 'right-4'} opacity-0 group-hover:opacity-100 transition-opacity`}
+                    initial={{ x: isRTL ? -10 : 10 }}
+                    whileHover={{ x: isRTL ? 0 : 0 }}
+                  >
+                    <ArrowRight className={`w-5 h-5 text-[#d4af37] ${isRTL ? 'rotate-180' : ''}`} />
+                  </motion.div>
+                </div>
+              </motion.div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Stats Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.8 }}
+          className="mt-12 sm:mt-16"
+        >
+          <div className={`rounded-2xl p-6 sm:p-8 border border-[#d4af37]/20 ${theme === "dark" ? "bg-gray-900/30" : "bg-white/50"}`}>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8">
+              {[
+                { icon: Briefcase, value: "3+", label: t.aboutYearsExperience },
+                { icon: Award, value: "50+", label: t.aboutProjectsDone },
+                { icon: Star, value: "30+", label: t.aboutHappyClients },
+                { icon: Calendar, value: "2024", label: t.educationGraduated.split(": ")[1] || "Graduate" },
+              ].map((stat, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={isInView ? { opacity: 1, scale: 1 } : {}}
+                  transition={{ delay: 1 + index * 0.1 }}
+                  className="text-center"
+                >
+                  <motion.div
+                    className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-2 sm:mb-3 rounded-full bg-[#d4af37]/10 flex items-center justify-center"
+                    whileHover={{ scale: 1.1, rotate: 360 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <stat.icon className="w-5 h-5 sm:w-6 sm:h-6 text-[#d4af37]" />
+                  </motion.div>
+                  <div className="text-xl sm:text-2xl font-bold gold-gradient-animated">{stat.value}</div>
+                  <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{stat.label}</div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </AnimatedSection>
+  );
+}
+
+function EducationSection() {
+  const { t, isRTL } = useLanguage();
+  const { theme } = useTheme();
+  
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  return (
+    <AnimatedSection id="education" className="py-16 sm:py-24 relative">
+      <div className="absolute inset-0 grid-pattern opacity-10" />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <motion.div
+          ref={ref}
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          className="text-center mb-12 sm:mb-16"
+        >
+          <Badge className="bg-[#d4af37]/10 text-[#d4af37] border-[#d4af37]/30 mb-4">
+            <Sparkles className="w-3 h-3 mr-2" />
+            {t.educationBadge}
+          </Badge>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            {t.educationTitle1} <span className="gold-gradient-animated">{t.educationTitle2}</span>
+          </h2>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.2 }}
+          className="max-w-2xl mx-auto"
+        >
+          <TiltCard>
+            <Card className={`rounded-2xl border-[#d4af37]/20 card-hover overflow-hidden group ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}>
+              <motion.div
+                className="h-1 bg-gradient-to-r from-[#d4af37] via-[#f59e0b] to-[#d4af37]"
+                initial={{ scaleX: 0 }}
+                animate={isInView ? { scaleX: 1 } : {}}
+                transition={{ duration: 1, delay: 0.5 }}
+              />
+              
+              <CardHeader className="pb-2 p-4 sm:p-6">
+                <div className={`flex items-center gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <motion.div
+                    className="w-12 h-12 sm:w-16 sm:h-16 bg-[#d4af37]/10 rounded-xl flex items-center justify-center relative overflow-hidden shrink-0"
+                    whileHover={{ scale: 1.1 }}
+                  >
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-br from-[#d4af37]/20 to-transparent"
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                    />
+                    <GraduationCap className="w-6 h-6 sm:w-8 sm:h-8 text-[#d4af37] relative z-10" />
+                  </motion.div>
+                  <div className={isRTL ? 'text-right' : ''}>
+                    <CardTitle className="text-lg sm:text-xl text-gray-900 dark:text-white group-hover:text-[#d4af37] transition-colors">
+                      {t.educationDegree}
+                    </CardTitle>
+                    <CardDescription className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+                      {t.educationUniversity}
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              
+              <CardContent className="p-4 sm:p-6 pt-0">
+                <motion.div
+                  className={`flex items-center gap-2 text-[#d4af37] ${isRTL ? 'flex-row-reverse' : ''}`}
+                  initial={{ opacity: 0, x: isRTL ? 20 : -20 }}
+                  animate={isInView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ delay: 0.7 }}
+                >
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    <Award className="w-5 h-5" />
+                  </motion.div>
+                  <span className="font-medium text-sm sm:text-base">{t.educationGraduated}</span>
+                </motion.div>
+              </CardContent>
+            </Card>
+          </TiltCard>
+        </motion.div>
+      </div>
+    </AnimatedSection>
+  );
+}
+
+function LanguagesSection() {
+  const { t, isRTL } = useLanguage();
+  const { theme } = useTheme();
+  
+  const languages = [
+    { name: t.languageArabic, level: t.languageNative },
+    { name: t.languageEnglish, level: t.languageVeryGood },
+  ];
+
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  return (
+    <AnimatedSection id="languages" className={`py-16 sm:py-24 relative ${theme === "dark" ? "bg-[#0a0a0a]" : "bg-gray-50"}`}>
+      <div className="absolute inset-0 grid-pattern opacity-15" />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <motion.div
+          ref={ref}
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          className="text-center mb-12 sm:mb-16"
+        >
+          <Badge className="bg-[#d4af37]/10 text-[#d4af37] border-[#d4af37]/30 mb-4">
+            <Sparkles className="w-3 h-3 mr-2" />
+            {t.languagesBadge}
+          </Badge>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            {t.languagesTitle1} <span className="gold-gradient-animated">{t.languagesTitle2}</span>
+          </h2>
+        </motion.div>
+
+        <div className="max-w-2xl mx-auto space-y-4 sm:space-y-6">
+          {languages.map((lang, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, x: index % 2 === 0 ? (isRTL ? 50 : -50) : (isRTL ? -50 : 50) }}
+              animate={isInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ delay: index * 0.2 }}
+            >
+              <TiltCard>
+                <div className={`rounded-xl p-4 sm:p-6 card-hover group border border-[#d4af37]/20 ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}>
+                  <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <motion.div
+                        whileHover={{ rotate: 360 }}
+                        transition={{ duration: 0.6 }}
+                      >
+                        <LanguagesIcon className="w-5 h-5 text-[#d4af37]" aria-hidden="true" />
+                      </motion.div>
+                      <span className="text-base sm:text-lg font-medium text-gray-900 dark:text-white group-hover:text-[#d4af37] transition-colors">
+                        {lang.name}
+                      </span>
+                    </div>
+                    <Badge className="bg-[#d4af37]/10 text-[#d4af37] border-[#d4af37]/30 text-xs sm:text-sm">
+                      {lang.level}
+                    </Badge>
+                  </div>
+                </div>
+              </TiltCard>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </AnimatedSection>
+  );
+}
+
+function ContactSection() {
+  const { t, isRTL } = useLanguage();
+  const { theme } = useTheme();
+  
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  // The site is static: the form composes a pre-filled email in the
+  // visitor's own mail app rather than pretending to send from here.
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const mailtoLink = `mailto:gamalabdlhafez263@gmail.com?subject=${encodeURIComponent(
+      formData.subject
+    )}&body=${encodeURIComponent(
+      `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
+    )}`;
+
+    window.location.href = mailtoLink;
+    setIsSubmitted(true);
+    setTimeout(() => setIsSubmitted(false), 4000);
+  };
+
+  const contactInfo = [
+    {
+      icon: MessageCircle,
+      label: t.contactWhatsApp,
+      value: "+966 55 296 2213",
+      link: "https://wa.me/966552962213",
+      color: "#25D366",
+    },
+    {
+      icon: Mail,
+      label: t.contactEmail,
+      value: "gamalabdlhafez263@gmail.com",
+      link: "mailto:gamalabdlhafez263@gmail.com",
+      color: "#d4af37",
+    },
+    {
+      icon: Linkedin,
+      label: t.contactLinkedIn,
+      value: "linkedin.com/in/gamal-abdlhafez",
+      link: "https://linkedin.com/in/gamal-abdlhafez-2b9436289",
+      color: "#0A66C2",
+    },
+    {
+      icon: MapPin,
+      label: t.contactLocation,
+      value: t.heroLocation,
+      link: null,
+      color: "#d4af37",
+    },
+  ];
+
+  const formFields = [
+    { name: "name", placeholder: t.contactNamePlaceholder, type: "text" },
+    { name: "email", placeholder: t.contactEmailPlaceholder, type: "email" },
+    { name: "subject", placeholder: t.contactSubjectPlaceholder, type: "text" },
+  ];
+
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  return (
+    <AnimatedSection id="contact" className="py-16 sm:py-24 relative">
+      <div className="absolute inset-0 grid-pattern opacity-10" />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <motion.div
+          ref={ref}
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          className="text-center mb-12 sm:mb-16"
+        >
+          <Badge className="bg-[#d4af37]/10 text-[#d4af37] border-[#d4af37]/30 mb-4">
+            <Sparkles className="w-3 h-3 mr-2" />
+            {t.contactBadge}
+          </Badge>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            {t.contactTitle1} <span className="gold-gradient-animated">{t.contactTitle2}</span>
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-sm sm:text-base">
+            {t.contactDescription}
+          </p>
+        </motion.div>
+
+        <div className={`grid lg:grid-cols-2 gap-8 lg:gap-12 ${isRTL ? 'lg:flex-row-reverse' : ''}`}>
+          <motion.div
+            initial={{ opacity: 0, x: isRTL ? 50 : -50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ delay: 0.2 }}
+            className={isRTL ? 'lg:order-2' : ''}
+          >
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-4 sm:mb-6">
+              {t.contactInfoTitle}
+            </h3>
+            <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
+              {contactInfo.map((info, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: isRTL ? 30 : -30 }}
+                  animate={isInView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ delay: 0.3 + index * 0.1 }}
+                  whileHover={{ x: isRTL ? -10 : 10, scale: 1.02 }}
+                  className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl group cursor-pointer border border-[#d4af37]/20 ${
+                    info.link ? "hover:border-[#d4af37]/40" : ""
+                  } ${isRTL ? 'flex-row-reverse' : ''} ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}
+                  onClick={() => info.link && window.open(info.link, "_blank")}
+                >
+                  <motion.div
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center relative overflow-hidden shrink-0"
+                    style={{ background: `${info.color}15` }}
+                    whileHover={{ scale: 1.1 }}
+                  >
+                    <motion.div
+                      className="absolute inset-0"
+                      style={{ background: `${info.color}20` }}
+                      initial={{ scale: 0 }}
+                      whileHover={{ scale: 1 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                    <info.icon className="w-4 sm:w-5 h-4 sm:h-5 relative z-10" style={{ color: info.color }} />
+                  </motion.div>
+                  <div className={isRTL ? 'text-right' : ''}>
+                    <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">{info.label}</p>
+                    <p className="text-gray-900 dark:text-white font-medium group-hover:text-[#d4af37] transition-colors text-sm sm:text-base">
+                      {info.value}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: 0.7 }}
+              className={`flex flex-wrap gap-3 sm:gap-4 ${isRTL ? 'justify-end' : ''}`}
+            >
+              <MagneticButton>
+                <Button
+                  asChild
+                  className="bg-green-600 hover:bg-green-700 text-white text-sm"
+                >
+                  <a
+                    href="https://wa.me/966552962213"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <MessageCircle className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                    {t.contactChatWhatsApp}
+                  </a>
+                </Button>
+              </MagneticButton>
+              <MagneticButton>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="border-[#d4af37]/50 text-[#d4af37] hover:bg-[#d4af37]/10 text-sm"
+                >
+                  <a href="mailto:gamalabdlhafez263@gmail.com">
+                    <Mail className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                    {t.contactSendEmail}
+                  </a>
+                </Button>
+              </MagneticButton>
+            </motion.div>
+
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={isInView ? { opacity: 1 } : {}}
+              transition={{ delay: 0.9 }}
+              className={`text-gray-600 dark:text-gray-400 mt-6 sm:mt-8 italic text-base sm:text-lg ${isRTL ? 'text-right' : ''}`}
+            >
+              &ldquo;{t.contactQuote}&rdquo;
+            </motion.p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: isRTL ? -50 : 50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ delay: 0.3 }}
+            className={isRTL ? 'lg:order-1' : ''}
+          >
+            <Card className={`rounded-2xl border-[#d4af37]/20 overflow-hidden ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}>
+              <motion.div
+                className="h-1 bg-gradient-to-r from-[#d4af37] via-[#f59e0b] to-[#d4af37]"
+                animate={{
+                  backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                }}
+                transition={{ duration: 3, repeat: Infinity }}
+                style={{ backgroundSize: "200% 200%" }}
+              />
+              
+              <CardHeader className="p-4 sm:p-6">
+                <CardTitle className={`text-lg sm:text-xl text-gray-900 dark:text-white ${isRTL ? 'text-right' : ''}`}>
+                  {t.contactFormTitle}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 sm:p-6 pt-0">
+                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+                  {formFields.map((field, index) => (
+                    <motion.div
+                      key={field.name}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={isInView ? { opacity: 1, y: 0 } : {}}
+                      transition={{ delay: 0.4 + index * 0.1 }}
+                      className="form-field-animated relative"
+                    >
+                      <label htmlFor={`contact-${field.name}`} className="sr-only">
+                        {field.placeholder}
+                      </label>
+                      <Input
+                        id={`contact-${field.name}`}
+                        type={field.type}
+                        placeholder={field.placeholder}
+                        value={formData[field.name as keyof typeof formData]}
+                        onChange={(e) =>
+                          setFormData({ ...formData, [field.name]: e.target.value })
+                        }
+                        required
+                        className={`bg-gray-50 dark:bg-gray-800 border-[#d4af37]/20 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-[#d4af37] h-10 sm:h-12 transition-all duration-300 focus:ring-2 focus:ring-[#d4af37]/20 text-sm sm:text-base ${isRTL ? 'text-right' : ''}`}
+                      />
+                    </motion.div>
+                  ))}
+                  
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ delay: 0.7 }}
+                    className="form-field-animated relative"
+                  >
+                    <label htmlFor="contact-message" className="sr-only">
+                      {t.contactMessagePlaceholder}
+                    </label>
+                    <Textarea
+                      id="contact-message"
+                      placeholder={t.contactMessagePlaceholder}
+                      value={formData.message}
+                      onChange={(e) =>
+                        setFormData({ ...formData, message: e.target.value })
+                      }
+                      required
+                      rows={4}
+                      className={`bg-gray-50 dark:bg-gray-800 border-[#d4af37]/20 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-[#d4af37] resize-none transition-all duration-300 focus:ring-2 focus:ring-[#d4af37]/20 text-sm sm:text-base ${isRTL ? 'text-right' : ''}`}
+                    />
+                  </motion.div>
+                  
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ delay: 0.8 }}
+                  >
+                    <MagneticButton className="w-full">
+                      <Button
+                        type="submit"
+                        className="w-full bg-gradient-to-r from-[#d4af37] to-[#f59e0b] text-white hover:from-[#f59e0b] hover:to-[#d4af37] py-5 sm:py-6 text-sm sm:text-base font-semibold btn-glow relative overflow-hidden group"
+                      >
+                        <span aria-live="polite" className="flex items-center">
+                          {isSubmitted ? (
+                            <motion.span
+                              className="flex items-center"
+                              initial={{ scale: 0.6, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                            >
+                              <CheckCircle className={`w-4 sm:w-5 h-4 sm:h-5 ${isRTL ? 'ml-2' : 'mr-2'}`} aria-hidden="true" />
+                              {t.contactSent}
+                            </motion.span>
+                          ) : (
+                            <>
+                              <Send className={`w-4 sm:w-5 h-4 sm:h-5 group-hover:translate-x-1 transition-transform ${isRTL ? 'ml-2 rotate-180' : 'mr-2'}`} aria-hidden="true" />
+                              {t.contactSend}
+                            </>
+                          )}
+                        </span>
+                      </Button>
+                    </MagneticButton>
+                    <p className={`mt-3 text-xs text-gray-500 dark:text-gray-400 ${isRTL ? 'text-right' : ''}`}>
+                      {t.contactFormNote}
+                    </p>
+                  </motion.div>
+                </form>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+      </div>
+    </AnimatedSection>
+  );
+}
+
+function Footer() {
+  const { t, isRTL } = useLanguage();
+  const { theme } = useTheme();
+  
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsVisible(window.scrollY > 500);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <footer className={`border-t border-[#d4af37]/20 py-8 sm:py-12 relative ${theme === "dark" ? "bg-[#0a0a0a]" : "bg-white"}`}>
+      <div className="absolute inset-0 grid-pattern opacity-10" />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className={`flex flex-col md:flex-row items-center justify-between gap-6 ${isRTL ? 'md:flex-row-reverse' : ''}`}>
+          <motion.div
+            initial={{ opacity: 0, x: isRTL ? 20 : -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            className={`text-center ${isRTL ? 'md:text-right' : 'md:text-left'}`}
+          >
+            <motion.h3
+              className="text-lg sm:text-xl font-bold gold-gradient-animated mb-2"
+              whileHover={{ scale: 1.05 }}
+            >
+              {t.footerName}
+            </motion.h3>
+            <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm">
+              {t.footerTitle}
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-3 sm:gap-4"
+          >
+            {[
+              { icon: MessageCircle, href: "https://wa.me/966552962213", color: "#25D366" },
+              { icon: Linkedin, href: "https://linkedin.com/in/gamal-abdlhafez-2b9436289", color: "#0A66C2" },
+              { icon: Mail, href: "mailto:gamalabdlhafez263@gmail.com", color: "#d4af37" },
+            ].map((social, index) => (
+              <motion.a
+                key={index}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-400 transition-all duration-300 hover:scale-110 border border-[#d4af37]/20 ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}
+                style={{ 
+                  "--hover-color": social.color 
+                } as React.CSSProperties}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = social.color;
+                  e.currentTarget.style.color = social.color;
+                  e.currentTarget.style.boxShadow = `0 0 15px ${social.color}30`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.2)";
+                  e.currentTarget.style.color = theme === "dark" ? "#9ca3af" : "#6b7280";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <social.icon className="w-4 sm:w-5 h-4 sm:h-5" />
+              </motion.a>
+            ))}
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0, x: isRTL ? -20 : 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            className={`text-gray-500 text-xs sm:text-sm text-center ${isRTL ? 'md:text-left' : 'md:text-right'}`}
+          >
+            {t.footerCopyright}
+          </motion.p>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="text-center mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-[#d4af37]/10"
+        >
+          <p className="text-gray-500 text-xs sm:text-sm flex items-center justify-center gap-1.5 flex-wrap">
+            <span className="flex items-center gap-1.5">
+              {t.footerMadeWith}
+              <span className="text-[#d4af37] font-medium">Next.js</span>
+              <span className="text-gray-400">&</span>
+              <span className="text-[#d4af37] font-medium">Framer Motion</span>
+            </span>
+          </p>
+          <motion.p
+            className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm flex items-center justify-center gap-2 mt-2"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+          >
+            <span className="text-gray-500">{t.footerDesignBy}</span>
+            <span className="text-[#d4af37] font-semibold">Gemo</span>
+            <motion.span
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 1, repeat: Infinity }}
+            >
+              💜
+            </motion.span>
+          </motion.p>
+        </motion.div>
+      </div>
+
+      <AnimatePresence>
+        {isVisible && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0 }}
+            onClick={scrollToTop}
+            aria-label="Back to top"
+            className={`fixed bottom-6 sm:bottom-8 ${isRTL ? 'left-6 sm:left-8' : 'right-6 sm:right-8'} w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-[#d4af37] to-[#f59e0b] text-white rounded-full flex items-center justify-center shadow-lg z-40 btn-glow`}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <motion.div
+              animate={{ y: [0, -3, 0] }}
+              transition={{ duration: 1, repeat: Infinity }}
+            >
+              <ChevronUp className="w-5 sm:w-6 h-5 sm:h-6" />
+            </motion.div>
+          </motion.button>
+        )}
+      </AnimatePresence>
+    </footer>
+  );
+}
+
+// Main Page Component
+function PortfolioContent() {
+  const { theme } = useTheme();
+
+  return (
+    <main className={`min-h-screen overflow-x-hidden relative ${theme === "dark" ? "bg-[#0a0a0a] text-white" : "bg-white text-gray-900"}`}>
+      <PageLoader />
+      <ScrollProgress />
+      <GradientOrbs />
+
+      <div className="mood-light-1" aria-hidden="true" />
+      <div className="mood-light-2" aria-hidden="true" />
+      <div className="ambient-vignette" aria-hidden="true" />
+
+      <div className="noise-overlay" aria-hidden="true" />
+
+      <Navigation />
+      <HeroSection />
+      <AboutSection />
+      <SkillsSection />
+      <ProjectsSection />
+      <GraphicDesignWorksSection />
+      <ExperienceSection />
+      <EducationSection />
+      <CertificatesSection />
+      <LanguagesSection />
+      <ContactSection />
+      <Footer />
+    </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <ThemeProvider>
+      <LanguageProvider>
+        <MotionConfig reducedMotion="user">
+          <PortfolioContent />
+        </MotionConfig>
+      </LanguageProvider>
+    </ThemeProvider>
+  );
+}
