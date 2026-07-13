@@ -497,11 +497,7 @@ function HeroSection() {
               className={`mb-5 ${isRTL ? "flex justify-center lg:justify-end" : "flex justify-center lg:justify-start"}`}
             >
               <span className="frosted-badge">
-                <motion.span
-                  animate={{ scale: [1, 1.3, 1] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                  className="w-2 h-2 rounded-full bg-emerald-400 inline-block"
-                />
+                <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block hero-dot-pulse" aria-hidden="true" />
                 {t.heroAvailable}
               </span>
             </motion.div>
@@ -601,25 +597,20 @@ function HeroSection() {
             {/* Profile image with premium frame */}
             <div className="relative">
               {/* Rotating rings */}
-              <motion.div
-                className="absolute inset-0 rounded-3xl border border-[#d4af37]/20"
-                style={{ scale: 1.08 }}
-                animate={{ rotate: 360 }}
-                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+              <div
+                className="absolute inset-0 rounded-3xl border border-[#d4af37]/20 hero-ring-1"
+                aria-hidden="true"
               />
-              <motion.div
-                className="absolute inset-0 rounded-3xl border border-[#d4af37]/10"
-                style={{ scale: 1.16 }}
-                animate={{ rotate: -360 }}
-                transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
+              <div
+                className="absolute inset-0 rounded-3xl border border-[#d4af37]/10 hero-ring-2"
+                aria-hidden="true"
               />
 
               {/* Glow */}
-              <motion.div
-                className="absolute inset-0 rounded-3xl opacity-30 blur-3xl"
+              <div
+                className="absolute inset-0 rounded-3xl opacity-30 blur-3xl hero-glow-pulse"
                 style={{ background: "radial-gradient(circle, rgba(212,175,55,0.6) 0%, transparent 70%)" }}
-                animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.35, 0.2] }}
-                transition={{ duration: 4, repeat: Infinity }}
+                aria-hidden="true"
               />
 
               {/* Image */}
