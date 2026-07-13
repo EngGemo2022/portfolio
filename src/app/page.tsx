@@ -156,56 +156,6 @@ function GradientOrbs() {
   );
 }
 
-function PageLoader() {
-  const { theme } = useTheme();
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, []);
-
-  return (
-    <AnimatePresence>
-      {loading && (
-        <motion.div
-          className="page-loader"
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="flex flex-col items-center gap-8">
-            <motion.div
-              initial={{ scale: 0, rotate: -180 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ type: "spring", stiffness: 200, damping: 15 }}
-              className="text-4xl font-bold gold-gradient-animated"
-            >
-              GH
-            </motion.div>
-            <div className="flex gap-1">
-              {[0, 1, 2, 3, 4].map((i) => (
-                <motion.div
-                  key={i}
-                  className="w-1.5 h-8 bg-[#d4af37] rounded-full"
-                  animate={{
-                    scaleY: [0.4, 1, 0.4],
-                  }}
-                  transition={{
-                    duration: 0.6,
-                    repeat: Infinity,
-                    delay: i * 0.1,
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
-
 function AnimatedSection({
   children,
   className = "",
@@ -1258,6 +1208,10 @@ function GraphicDesignWorksSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
+  // Marquee runs only while visible — saves main-thread work off-screen
+  const marqueeRef = useRef(null);
+  const marqueeInView = useInView(marqueeRef, { margin: "100px" });
+
   // Keyboard support + scroll lock while the design lightbox is open
   const designCount = designs.length;
   useEffect(() => {
@@ -1300,8 +1254,8 @@ function GraphicDesignWorksSection() {
         </motion.div>
       </div>
 
-      {/* Infinite Scrolling Carousel */}
-      <div className="relative w-full overflow-hidden">
+      {/* Infinite Scrolling Carousel — animates only while on screen */}
+      <div ref={marqueeRef} className="relative w-full overflow-hidden">
         {/* Gradient Overlays */}
         <div className={`absolute left-0 top-0 bottom-0 w-20 sm:w-40 z-10 pointer-events-none ${theme === "dark" ? "bg-gradient-to-r from-[#0a0a0a]" : "bg-gradient-to-r from-gray-50"}`} />
         <div className={`absolute right-0 top-0 bottom-0 w-20 sm:w-40 z-10 pointer-events-none ${theme === "dark" ? "bg-gradient-to-l from-[#0a0a0a]" : "bg-gradient-to-l from-gray-50"}`} />
@@ -1309,9 +1263,11 @@ function GraphicDesignWorksSection() {
         {/* Scrolling Container */}
         <motion.div
           className="flex gap-4 sm:gap-6 py-4"
-          animate={{
-            x: isRTL ? [0, 7500] : [0, -7500],
-          }}
+          animate={
+            marqueeInView
+              ? { x: isRTL ? [0, 7500] : [0, -7500] }
+              : undefined
+          }
           transition={{
             x: {
               duration: 120,
@@ -1982,7 +1938,6 @@ function PortfolioContent() {
       <a href="#about" className="skip-link">
         {t.skipToContent}
       </a>
-      <PageLoader />
       <ScrollProgress />
       <GradientOrbs />
 

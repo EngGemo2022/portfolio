@@ -922,7 +922,6 @@ html {
   filter: blur(60px);
   pointer-events: none;
   z-index: 1;
-  animation: mood-pulse-1 8s ease-in-out infinite;
 }
 
 /* Secondary mood light - Bottom right */
@@ -936,7 +935,6 @@ html {
   filter: blur(80px);
   pointer-events: none;
   z-index: 1;
-  animation: mood-pulse-2 10s ease-in-out infinite;
 }
 
 /* Accent mood light - Center floating */
