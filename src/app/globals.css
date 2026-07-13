@@ -1444,6 +1444,25 @@ html {
    ACCESSIBILITY
    ============================================ */
 
+/* Skip-to-content link: hidden until keyboard-focused */
+.skip-link {
+  position: fixed;
+  top: -100px;
+  inset-inline-start: 16px;
+  z-index: 100;
+  padding: 10px 20px;
+  border-radius: 9999px;
+  background: #d4af37;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus-visible {
+  top: 16px;
+}
+
 /* Visible focus for keyboard users */
 :focus-visible {
   outline: 2px solid #d4af37;

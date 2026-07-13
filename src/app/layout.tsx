@@ -24,22 +24,26 @@ const cairo = Cairo({
 
 const SITE_URL = "https://gemo-portfolio.vercel.app";
 
+const TITLE = "جمال عبدالحافظ | مصمم مواقع وهويات بصرية — الرياض";
+const DESCRIPTION =
+  "أساعد الشركات السعودية على إطلاق مواقع وهويات بصرية تكسب ثقة العملاء. مواقع متجاوبة، شعارات، وتصاميم سوشيال ميديا. Gamal Abdlhafez — Web & Brand Designer, Riyadh.";
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Gamal Abdlhafez | Graphic Designer & Web Designer",
-  description:
-    "Portfolio of Gamal Abdlhafez Hamood — Graphic Designer, Brand Identity Creator & Web Designer based in Riyadh, Saudi Arabia. Logos, social media design, responsive websites, and verified credentials.",
+  title: TITLE,
+  description: DESCRIPTION,
   keywords: [
-    "Graphic Designer",
+    "مصمم مواقع",
+    "هوية بصرية",
+    "تصميم شعار",
+    "مصمم جرافيك الرياض",
+    "تصميم سوشيال ميديا",
     "Web Designer",
     "Brand Identity",
-    "UI/UX Designer",
     "Logo Designer",
-    "Digital Design",
     "Riyadh",
     "Saudi Arabia",
     "Gamal Abdlhafez",
-    "Portfolio",
   ],
   authors: [{ name: "Gamal Abdlhafez Hamood" }],
   alternates: {
@@ -50,26 +54,26 @@ export const metadata: Metadata = {
     apple: "/images/profile.jpg",
   },
   openGraph: {
-    title: "Gamal Abdlhafez | Graphic Designer & Web Designer",
-    description:
-      "Crafting premium digital experiences through graphic design, branding, and web design — based in Riyadh, Saudi Arabia.",
+    title: TITLE,
+    description: DESCRIPTION,
     url: SITE_URL,
-    siteName: "Gamal Abdlhafez Portfolio",
+    siteName: "Gamal Abdlhafez — جمال عبدالحافظ",
     type: "website",
+    locale: "ar_SA",
+    alternateLocale: "en_US",
     images: [
       {
         url: "/images/profile.jpg",
         width: 1200,
         height: 630,
-        alt: "Gamal Abdlhafez Hamood — Graphic Designer & Web Designer",
+        alt: "Gamal Abdlhafez — Web & Brand Designer | جمال عبدالحافظ — مصمم مواقع وهويات بصرية",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Gamal Abdlhafez | Graphic Designer & Web Designer",
-    description:
-      "Crafting premium digital experiences through graphic design, branding, and web design.",
+    title: TITLE,
+    description: DESCRIPTION,
     images: ["/images/profile.jpg"],
   },
 };
@@ -79,7 +83,8 @@ const personJsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: "Gamal Abdlhafez Hamood",
-  jobTitle: "Graphic Designer & Web Designer",
+  alternateName: "جمال عبدالحافظ حمود",
+  jobTitle: "Web & Brand Designer",
   url: SITE_URL,
   image: `${SITE_URL}/images/profile.jpg`,
   email: "mailto:gamalabdlhafez263@gmail.com",
@@ -96,19 +101,45 @@ const personJsonLd = {
   knowsLanguage: ["ar", "en"],
 };
 
+const serviceJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: "Gamal Abdlhafez — Web & Brand Design",
+  alternateName: "جمال عبدالحافظ — تصميم مواقع وهويات بصرية",
+  description:
+    "Website design and development, brand identity and logo design, and social media design for businesses in Saudi Arabia.",
+  url: SITE_URL,
+  image: `${SITE_URL}/images/profile.jpg`,
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Riyadh",
+    addressCountry: "SA",
+  },
+  areaServed: "SA",
+  founder: { "@type": "Person", name: "Gamal Abdlhafez Hamood" },
+  sameAs: [
+    "https://linkedin.com/in/gamal-abdlhafez-2b9436289",
+    "https://wa.me/966552962213",
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="ar" dir="rtl" className="dark" suppressHydrationWarning>
       <body
         className={`${inter.variable} ${jakarta.variable} ${cairo.variable} antialiased bg-background text-foreground`}
       >
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
         />
         {children}
         <Toaster />

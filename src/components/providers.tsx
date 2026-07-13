@@ -86,15 +86,16 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 let cachedInitialLanguage: Language | undefined = undefined;
 
+// Arabic is the default: the primary audience is Saudi businesses.
 function getInitialLanguage(): Language {
   if (cachedInitialLanguage !== undefined) {
     return cachedInitialLanguage;
   }
   if (typeof window !== 'undefined') {
     const savedLang = localStorage.getItem("language") as Language;
-    cachedInitialLanguage = (savedLang === "ar" || savedLang === "en") ? savedLang : "en";
+    cachedInitialLanguage = (savedLang === "ar" || savedLang === "en") ? savedLang : "ar";
   } else {
-    cachedInitialLanguage = "en";
+    cachedInitialLanguage = "ar";
   }
   return cachedInitialLanguage;
 }

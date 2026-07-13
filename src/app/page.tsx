@@ -297,6 +297,7 @@ function Navigation() {
 
   return (
     <motion.nav
+      aria-label="Main navigation"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, type: "spring" }}
@@ -511,13 +512,6 @@ function HeroSection() {
     { value: "15+", label: t.aboutHappyClients },
   ];
 
-  const roles = [t.heroTitle1, t.heroTitle2, "Brand Identity Designer"];
-  const [roleIdx, setRoleIdx] = useState(0);
-  useEffect(() => {
-    const timer = setInterval(() => setRoleIdx(i => (i + 1) % roles.length), 3000);
-    return () => clearInterval(timer);
-  }, [roles.length]);
-
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16 sm:pt-20">
       {/* Background */}
@@ -565,37 +559,32 @@ function HeroSection() {
               </span>
             </motion.div>
 
-            {/* Main headline */}
+            {/* Name + role */}
+            <motion.div
+              variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}
+              className="mb-5"
+            >
+              <p className="font-display text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                Gamal <span className="hero-gradient-text">Abdlhafez</span>
+              </p>
+              <p className="text-sm sm:text-base font-medium text-[#d4af37] mt-1">
+                {t.heroTitle1}
+              </p>
+            </motion.div>
+
+            {/* Outcome headline */}
             <motion.div
               variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } }}
-              className="mb-4"
+              className="mb-5"
             >
-              <h1 className="font-display heading-xl text-gray-900 dark:text-white">
-                <span className="block">Gamal{" "}</span>
-                <span className="block hero-gradient-text">Abdlhafez</span>
+              <h1 className="font-display heading-lg text-gray-900 dark:text-white">
+                {t.heroHeadlineA}{" "}
+                <span className="hero-gradient-text">{t.heroHeadlineB}</span>{" "}
+                {t.heroHeadlineC}
               </h1>
             </motion.div>
 
-            {/* Animated role */}
-            <motion.div
-              variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}
-              className="mb-6 h-8 overflow-hidden"
-            >
-              <AnimatePresence mode="wait">
-                <motion.p
-                  key={roleIdx}
-                  initial={{ y: 32, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: -32, opacity: 0 }}
-                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="text-lg sm:text-xl font-medium text-[#d4af37]"
-                >
-                  — {roles[roleIdx]}
-                </motion.p>
-              </AnimatePresence>
-            </motion.div>
-
-            {/* Description */}
+            {/* Subline */}
             <motion.p
               variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}
               className="text-base sm:text-lg text-gray-500 dark:text-gray-400 mb-8 max-w-lg leading-relaxed"
@@ -603,66 +592,54 @@ function HeroSection() {
               {t.heroDescription1}
             </motion.p>
 
-            {/* CTAs */}
+            {/* CTAs — one primary (WhatsApp), one secondary */}
             <motion.div
               variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}
               className={`flex flex-wrap gap-3 mb-8 ${isRTL ? "justify-center lg:justify-end" : "justify-center lg:justify-start"}`}
             >
               <MagneticButton>
                 <motion.a
+                  href={`https://wa.me/966552962213?text=${encodeURIComponent(t.contactWaPrefill)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-[#25D366] hover:bg-[#1eb855] text-white font-bold text-sm sm:text-base shadow-lg shadow-green-500/25 transition-colors"
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <MessageCircle className="w-5 h-5" aria-hidden="true" />
+                  {t.heroWhatsAppMe}
+                </motion.a>
+              </MagneticButton>
+              <MagneticButton>
+                <motion.a
                   href="#projects"
-                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-gradient-to-r from-[#d4af37] to-[#f59e0b] text-white font-semibold text-sm shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 transition-shadow"
+                  className="inline-flex items-center gap-2 px-7 py-4 rounded-full border border-[#d4af37]/40 text-[#d4af37] font-semibold text-sm hover:bg-[#d4af37]/8 transition-colors"
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.97 }}
                 >
-                  <Layers className="w-4 h-4" />
+                  <Layers className="w-4 h-4" aria-hidden="true" />
                   {t.heroViewProjects}
-                </motion.a>
-              </MagneticButton>
-              <MagneticButton>
-                <motion.a
-                  href="#contact"
-                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-[#d4af37]/40 text-[#d4af37] font-semibold text-sm hover:bg-[#d4af37]/8 transition-colors"
-                  whileHover={{ scale: 1.04 }}
-                  whileTap={{ scale: 0.97 }}
-                >
-                  <Mail className="w-4 h-4" />
-                  {t.heroContactMe}
-                </motion.a>
-              </MagneticButton>
-              <MagneticButton>
-                <motion.a
-                  href={language === "ar" ? "/cv/gamal-hamood-cv-ar.pdf" : "/cv/gamal-hamood-cv.pdf"}
-                  download
-                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 font-semibold text-sm hover:border-[#d4af37]/40 hover:text-[#d4af37] transition-colors"
-                  whileHover={{ scale: 1.04 }}
-                  whileTap={{ scale: 0.97 }}
-                >
-                  <Download className="w-4 h-4" />
-                  {t.heroDownloadCV}
                 </motion.a>
               </MagneticButton>
             </motion.div>
 
-            {/* Location + WhatsApp */}
+            {/* Location + email */}
             <motion.div
               variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
               className={`flex flex-wrap items-center gap-5 text-sm text-gray-400 ${isRTL ? "justify-center lg:justify-end" : "justify-center lg:justify-start"}`}
             >
               <span className="flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-[#d4af37]" />
+                <MapPin className="w-3.5 h-3.5 text-[#d4af37]" aria-hidden="true" />
                 {t.heroLocation}
               </span>
-              <span className="w-px h-4 bg-gray-200 dark:bg-white/10" />
+              <span className="w-px h-4 bg-gray-200 dark:bg-white/10" aria-hidden="true" />
               <motion.a
-                href="https://wa.me/966552962213"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 hover:text-green-400 transition-colors"
+                href="mailto:gamalabdlhafez263@gmail.com"
+                className="flex items-center gap-1.5 hover:text-[#d4af37] transition-colors"
                 whileHover={{ x: 3 }}
               >
-                <MessageCircle className="w-3.5 h-3.5" />
-                {t.heroWhatsAppMe}
+                <Mail className="w-3.5 h-3.5" aria-hidden="true" />
+                {t.contactSendEmail}
               </motion.a>
             </motion.div>
           </motion.div>
@@ -711,6 +688,7 @@ function HeroSection() {
                   src="/images/profile.jpg"
                   alt="Gamal Abdlhafez Hamood"
                   fill
+                  sizes="(max-width: 640px) 224px, (max-width: 1024px) 288px, 320px"
                   className="object-cover"
                   priority
                 />
@@ -726,8 +704,8 @@ function HeroSection() {
                 transition={{ delay: 1.2 }}
                 whileHover={{ scale: 1.05 }}
               >
-                <Award className="w-4 h-4 text-[#d4af37]" />
-                <span className="text-xs font-semibold text-gray-800 dark:text-white">Creative Designer</span>
+                <Award className="w-4 h-4 text-[#d4af37]" aria-hidden="true" />
+                <span className="text-xs font-semibold text-gray-800 dark:text-white">{t.heroTitle1}</span>
               </motion.div>
             </div>
 
@@ -772,7 +750,7 @@ function HeroSection() {
 }
 
 function AboutSection() {
-  const { t, isRTL } = useLanguage();
+  const { t, isRTL, language } = useLanguage();
   const { theme } = useTheme();
   
   const highlights = [
@@ -831,6 +809,16 @@ function AboutSection() {
               {t.aboutPara3}
             </p>
 
+            <div className={`pt-2 ${isRTL ? 'text-right' : ''}`}>
+              <a
+                href={language === "ar" ? "/cv/gamal-hamood-cv-ar.pdf" : "/cv/gamal-hamood-cv.pdf"}
+                download
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-[#d4af37]/40 text-[#d4af37] font-semibold text-sm hover:bg-[#d4af37]/10 transition-colors"
+              >
+                <Download className="w-4 h-4" aria-hidden="true" />
+                {t.heroDownloadCV}
+              </a>
+            </div>
           </motion.div>
 
           <motion.div
@@ -1231,6 +1219,7 @@ function ProjectsSection() {
                   src={project.image}
                   alt={`${project.title} — ${language === "ar" ? "لقطة من الموقع" : "website screenshot"}`}
                   fill
+                  sizes="(max-width: 768px) 100vw, 512px"
                   className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.04]"
                 />
                 {project.mobileImage && (
@@ -1461,6 +1450,7 @@ function GraphicDesignWorksSection() {
                     src={design.image}
                     alt={design.title}
                     fill
+                    sizes="320px"
                     className="object-contain p-4 sm:p-6 transition-transform duration-500 group-hover:scale-110"
                   />
                 </div>
@@ -1556,6 +1546,7 @@ function GraphicDesignWorksSection() {
                   src={designs[selectedDesign].image}
                   alt={designs[selectedDesign].title}
                   fill
+                  sizes="(max-width: 1024px) 100vw, 896px"
                   className="object-contain p-6 sm:p-10"
                 />
               </div>
@@ -1923,6 +1914,38 @@ function ContactSection() {
   );
 }
 
+// Floating WhatsApp CTA — mobile only, appears after scrolling past the hero
+function FloatingWhatsApp() {
+  const { t, isRTL } = useLanguage();
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > window.innerHeight * 0.9);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.a
+          initial={{ opacity: 0, scale: 0.6 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.6 }}
+          href={`https://wa.me/966552962213?text=${encodeURIComponent(t.contactWaPrefill)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={t.heroWhatsAppMe}
+          className={`sm:hidden fixed bottom-6 ${isRTL ? "right-5" : "left-5"} z-40 w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-xl shadow-green-500/30`}
+          whileTap={{ scale: 0.9 }}
+        >
+          <MessageCircle className="w-7 h-7" aria-hidden="true" />
+        </motion.a>
+      )}
+    </AnimatePresence>
+  );
+}
+
 function Footer() {
   const { t, isRTL } = useLanguage();
   const { theme } = useTheme();
@@ -2049,8 +2072,13 @@ function Footer() {
 function PortfolioContent() {
   const { theme } = useTheme();
 
+  const { t } = useLanguage();
+
   return (
-    <main className={`min-h-screen overflow-x-hidden relative ${theme === "dark" ? "bg-[#0a0a0a] text-white" : "bg-white text-gray-900"}`}>
+    <main id="main-content" className={`min-h-screen overflow-x-hidden relative ${theme === "dark" ? "bg-[#0a0a0a] text-white" : "bg-white text-gray-900"}`}>
+      <a href="#about" className="skip-link">
+        {t.skipToContent}
+      </a>
       <PageLoader />
       <ScrollProgress />
       <GradientOrbs />
@@ -2073,6 +2101,7 @@ function PortfolioContent() {
       <CertificatesSection />
       <LanguagesSection />
       <ContactSection />
+      <FloatingWhatsApp />
       <Footer />
     </main>
   );
