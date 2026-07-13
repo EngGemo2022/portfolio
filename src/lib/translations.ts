@@ -96,14 +96,7 @@ export interface Translations {
   servicesStart: string;
 
   // Case-study labels
-  caseProblem: string;
   caseDid: string;
-  caseOutcome: string;
-
-  // Testimonials
-  testimonialsBadge: string;
-  testimonialsTitle1: string;
-  testimonialsTitle2: string;
 
   // Projects
   projectsBadge: string;
@@ -344,13 +337,7 @@ export const translations: Record<Language, Translations> = {
     servicesDescription: "Three clear offers. Pick one, message me on WhatsApp, and we start.",
     servicesStart: "Start on WhatsApp",
 
-    caseProblem: "The Problem",
     caseDid: "What I Did",
-    caseOutcome: "Result",
-
-    testimonialsBadge: "Testimonials",
-    testimonialsTitle1: "What Clients",
-    testimonialsTitle2: "Say",
 
     projectsBadge: "Portfolio",
     projectsTitle1: "Featured",
@@ -582,13 +569,7 @@ export const translations: Record<Language, Translations> = {
     servicesDescription: "ثلاث خدمات واضحة. اختر ما يناسبك، راسلني على واتساب، ونبدأ.",
     servicesStart: "ابدأ عبر واتساب",
 
-    caseProblem: "التحدي",
     caseDid: "ماذا عملت",
-    caseOutcome: "النتيجة",
-
-    testimonialsBadge: "آراء العملاء",
-    testimonialsTitle1: "ماذا يقول",
-    testimonialsTitle2: "العملاء",
 
     projectsBadge: "أعمالي",
     projectsTitle1: "مشاريع",

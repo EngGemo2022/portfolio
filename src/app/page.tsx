@@ -28,8 +28,6 @@ import {
   Moon,
   ArrowRight,
   Megaphone,
-  Quote,
-  Clock,
   CheckCircle2,
   Briefcase,
 } from "lucide-react";
@@ -41,7 +39,6 @@ import { ThemeProvider, LanguageProvider, useTheme, useLanguage } from "@/compon
 import { CertificatesSection } from "@/components/certificates-section";
 import { services, serviceWaLink } from "@/data/services";
 import { caseStudies } from "@/data/projects";
-import { testimonials } from "@/data/testimonials";
 
 // ============================================
 // UTILITY COMPONENTS & HOOKS
@@ -1083,10 +1080,6 @@ function ServicesSection() {
                   ))}
                 </ul>
 
-                <p className={`flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 mb-4 ${isRTL ? "flex-row-reverse" : ""}`}>
-                  <Clock className="w-3.5 h-3.5" aria-hidden="true" />
-                  {service.timeline[language]}
-                </p>
 
                 <Button
                   asChild
@@ -1104,70 +1097,6 @@ function ServicesSection() {
               </motion.div>
             );
           })}
-        </div>
-      </div>
-    </AnimatedSection>
-  );
-}
-
-function TestimonialsSection() {
-  const { t, language, isRTL } = useLanguage();
-  const { theme } = useTheme();
-
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-
-  // Renders nothing until real testimonials exist in src/data/testimonials.ts
-  if (testimonials.length === 0) return null;
-
-  return (
-    <AnimatedSection id="testimonials" className="py-16 sm:py-24 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          className="text-center mb-12 sm:mb-16"
-        >
-          <Badge className="bg-[#d4af37]/10 text-[#d4af37] border-[#d4af37]/30 mb-4">
-            <Sparkles className="w-3 h-3 mr-2" aria-hidden="true" />
-            {t.testimonialsBadge}
-          </Badge>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
-            {t.testimonialsTitle1} <span className="gold-gradient-animated">{t.testimonialsTitle2}</span>
-          </h2>
-        </motion.div>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-          {testimonials.map((item, index) => (
-            <motion.figure
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: index * 0.12 }}
-              className={`rounded-2xl p-6 border border-[#d4af37]/20 ${
-                theme === "dark" ? "bg-gray-900" : "bg-white"
-              } ${item.featured ? "ring-1 ring-[#d4af37]/40" : ""} ${isRTL ? "text-right" : ""}`}
-            >
-              <Quote className="w-6 h-6 text-[#d4af37]/50 mb-3" aria-hidden="true" />
-              <blockquote className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-                {item.quote[language]}
-              </blockquote>
-              <figcaption className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}>
-                {item.image && (
-                  <span className="relative w-10 h-10 rounded-full overflow-hidden shrink-0">
-                    <Image src={item.image} alt={item.name} fill className="object-cover" />
-                  </span>
-                )}
-                <span>
-                  <span className="block text-sm font-semibold text-gray-900 dark:text-white">{item.name}</span>
-                  <span className="block text-xs text-gray-500 dark:text-gray-400">
-                    {item.role[language]} · {item.company}
-                  </span>
-                </span>
-              </figcaption>
-            </motion.figure>
-          ))}
         </div>
       </div>
     </AnimatedSection>
@@ -1213,7 +1142,6 @@ function ProjectsSection() {
               transition={{ delay: index * 0.15 }}
               className={`group rounded-2xl overflow-hidden border border-[#d4af37]/20 hover-lift ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}
             >
-              {/* Screenshots: desktop + optional mobile */}
               <div className="relative h-52 sm:h-60 overflow-hidden">
                 <Image
                   src={project.image}
@@ -1222,17 +1150,6 @@ function ProjectsSection() {
                   sizes="(max-width: 768px) 100vw, 512px"
                   className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.04]"
                 />
-                {project.mobileImage && (
-                  <span className={`absolute bottom-0 ${isRTL ? "left-4" : "right-4"} w-20 sm:w-24 rounded-t-xl overflow-hidden border-2 border-[#d4af37]/40 shadow-xl`}>
-                    <Image
-                      src={project.mobileImage}
-                      alt={`${project.title} — ${language === "ar" ? "عرض الجوال" : "mobile view"}`}
-                      width={96}
-                      height={200}
-                      className="object-cover"
-                    />
-                  </span>
-                )}
                 <div className={`absolute inset-0 bg-gradient-to-t ${theme === "dark" ? "from-gray-900/80" : "from-white/80"} via-transparent to-transparent`} aria-hidden="true" />
                 <div className={`absolute top-4 ${isRTL ? "left-4" : "right-4"} flex gap-2 flex-wrap`}>
                   {project.tags[language].map((tag, i) => (
@@ -1257,13 +1174,6 @@ function ProjectsSection() {
                   {project.context[language]}
                 </p>
 
-                {project.problem && (
-                  <div className="mb-4">
-                    <h4 className="section-label text-gray-500 dark:text-gray-400 mb-1">{t.caseProblem}</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{project.problem[language]}</p>
-                  </div>
-                )}
-
                 <h4 className="section-label text-gray-500 dark:text-gray-400 mb-2">{t.caseDid}</h4>
                 <ul className={`space-y-1.5 mb-4 list-none p-0 m-0`}>
                   {project.did[language].map((item, i) => (
@@ -1273,13 +1183,6 @@ function ProjectsSection() {
                     </li>
                   ))}
                 </ul>
-
-                {project.outcome && (
-                  <p className={`text-sm font-medium text-gray-900 dark:text-white bg-[#d4af37]/8 border border-[#d4af37]/25 rounded-lg px-3 py-2 mb-4 ${isRTL ? "text-right" : ""}`}>
-                    <span className="text-[#d4af37]">{t.caseOutcome}: </span>
-                    {project.outcome[language]}
-                  </p>
-                )}
 
                 {project.link && (
                   <Button
@@ -2094,7 +1997,6 @@ function PortfolioContent() {
       <AboutSection />
       <ServicesSection />
       <ProjectsSection />
-      <TestimonialsSection />
       <GraphicDesignWorksSection />
       <SkillsSection />
       <ExperienceSection />
