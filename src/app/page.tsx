@@ -10,39 +10,30 @@ import {
   Code,
   Globe,
   Mail,
-  Phone,
   MapPin,
   Linkedin,
   Download,
   ExternalLink,
   MessageCircle,
-  Send,
   Menu,
   X,
   ChevronUp,
   Sparkles,
   Layers,
-  PenTool,
   Figma,
   Zap,
   Award,
   GraduationCap,
   Languages as LanguagesIcon,
-  Star,
   ArrowDown,
-  CheckCircle,
   Sun,
   Moon,
   ArrowRight,
-  Calendar,
-  Briefcase,
   Target,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
 import { ThemeProvider, LanguageProvider, useTheme, useLanguage } from "@/components/providers";
 import { CertificatesSection } from "@/components/certificates-section";
@@ -50,30 +41,6 @@ import { CertificatesSection } from "@/components/certificates-section";
 // ============================================
 // UTILITY COMPONENTS & HOOKS
 // ============================================
-
-function AnimatedCounter({ value, suffix = "", duration = 2 }: { value: number; suffix?: string; duration?: number }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-
-  useEffect(() => {
-    if (!isInView) return;
-
-    let start = 0;
-    const end = value;
-    const incrementTime = (duration * 1000) / end;
-
-    const timer = setInterval(() => {
-      start += 1;
-      setCount(start);
-      if (start >= end) clearInterval(timer);
-    }, incrementTime);
-
-    return () => clearInterval(timer);
-  }, [isInView, value, duration]);
-
-  return <span ref={ref}>{count}{suffix}</span>;
-}
 
 function MagneticButton({ children, className }: { children: React.ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -536,8 +503,8 @@ function HeroSection() {
 
   const stats = [
     { value: "3+", label: t.aboutYearsExperience },
-    { value: "50+", label: t.aboutProjectsDone },
-    { value: "30+", label: t.aboutHappyClients },
+    { value: "20+", label: t.aboutProjectsDone },
+    { value: "15+", label: t.aboutHappyClients },
   ];
 
   const roles = [t.heroTitle1, t.heroTitle2, "Brand Identity Designer"];
@@ -600,7 +567,7 @@ function HeroSection() {
               className="mb-4"
             >
               <h1 className="font-display heading-xl text-gray-900 dark:text-white">
-                <span className="block">Gamal</span>
+                <span className="block">Gamal{" "}</span>
                 <span className="block hero-gradient-text">Abdlhafez</span>
               </h1>
             </motion.div>
@@ -815,12 +782,6 @@ function AboutSection() {
     { icon: MessageCircle, label: t.aboutCommunication, color: "from-[#f59e0b] to-[#fbbf24]" },
   ];
 
-  const stats = [
-    { value: 3, suffix: "+", label: t.aboutYearsExperience },
-    { value: 50, suffix: "+", label: t.aboutProjectsDone },
-    { value: 30, suffix: "+", label: t.aboutHappyClients },
-  ];
-
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
@@ -866,22 +827,6 @@ function AboutSection() {
               {t.aboutPara3}
             </p>
 
-            <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-4 sm:pt-6">
-              {stats.map((stat, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ delay: 0.4 + i * 0.1 }}
-                  className="text-center p-3 sm:p-4 rounded-xl bg-gray-50 dark:bg-gray-900 border border-[#d4af37]/20"
-                >
-                  <div className="text-xl sm:text-2xl font-bold gold-gradient-animated">
-                    <AnimatedCounter value={stat.value} suffix={stat.suffix} />
-                  </div>
-                  <div className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">{stat.label}</div>
-                </motion.div>
-              ))}
-            </div>
           </motion.div>
 
           <motion.div
@@ -1653,42 +1598,6 @@ function ExperienceSection() {
           ))}
         </div>
 
-        {/* Stats Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.8 }}
-          className="mt-12 sm:mt-16"
-        >
-          <div className={`rounded-2xl p-6 sm:p-8 border border-[#d4af37]/20 ${theme === "dark" ? "bg-gray-900/30" : "bg-white/50"}`}>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8">
-              {[
-                { icon: Briefcase, value: "3+", label: t.aboutYearsExperience },
-                { icon: Award, value: "50+", label: t.aboutProjectsDone },
-                { icon: Star, value: "30+", label: t.aboutHappyClients },
-                { icon: Calendar, value: "2024", label: t.educationGraduated.split(": ")[1] || "Graduate" },
-              ].map((stat, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                  transition={{ delay: 1 + index * 0.1 }}
-                  className="text-center"
-                >
-                  <motion.div
-                    className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-2 sm:mb-3 rounded-full bg-[#d4af37]/10 flex items-center justify-center"
-                    whileHover={{ scale: 1.1, rotate: 360 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <stat.icon className="w-5 h-5 sm:w-6 sm:h-6 text-[#d4af37]" />
-                  </motion.div>
-                  <div className="text-xl sm:text-2xl font-bold gold-gradient-animated">{stat.value}</div>
-                  <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{stat.label}</div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </motion.div>
       </div>
     </AnimatedSection>
   );
@@ -1856,29 +1765,7 @@ function ContactSection() {
   const { t, isRTL } = useLanguage();
   const { theme } = useTheme();
   
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  // The site is static: the form composes a pre-filled email in the
-  // visitor's own mail app rather than pretending to send from here.
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const mailtoLink = `mailto:gamalabdlhafez263@gmail.com?subject=${encodeURIComponent(
-      formData.subject
-    )}&body=${encodeURIComponent(
-      `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
-    )}`;
-
-    window.location.href = mailtoLink;
-    setIsSubmitted(true);
-    setTimeout(() => setIsSubmitted(false), 4000);
-  };
+  const waLink = `https://wa.me/966552962213?text=${encodeURIComponent(t.contactWaPrefill)}`;
 
   const contactInfo = [
     {
@@ -1909,12 +1796,6 @@ function ContactSection() {
       link: null,
       color: "#d4af37",
     },
-  ];
-
-  const formFields = [
-    { name: "name", placeholder: t.contactNamePlaceholder, type: "text" },
-    { name: "email", placeholder: t.contactEmailPlaceholder, type: "email" },
-    { name: "subject", placeholder: t.contactSubjectPlaceholder, type: "text" },
   ];
 
   const ref = useRef(null);
@@ -1990,49 +1871,6 @@ function ContactSection() {
               ))}
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.7 }}
-              className={`flex flex-wrap gap-3 sm:gap-4 ${isRTL ? 'justify-end' : ''}`}
-            >
-              <MagneticButton>
-                <Button
-                  asChild
-                  className="bg-green-600 hover:bg-green-700 text-white text-sm"
-                >
-                  <a
-                    href="https://wa.me/966552962213"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <MessageCircle className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                    {t.contactChatWhatsApp}
-                  </a>
-                </Button>
-              </MagneticButton>
-              <MagneticButton>
-                <Button
-                  asChild
-                  variant="outline"
-                  className="border-[#d4af37]/50 text-[#d4af37] hover:bg-[#d4af37]/10 text-sm"
-                >
-                  <a href="mailto:gamalabdlhafez263@gmail.com">
-                    <Mail className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                    {t.contactSendEmail}
-                  </a>
-                </Button>
-              </MagneticButton>
-            </motion.div>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={isInView ? { opacity: 1 } : {}}
-              transition={{ delay: 0.9 }}
-              className={`text-gray-600 dark:text-gray-400 mt-6 sm:mt-8 italic text-base sm:text-lg ${isRTL ? 'text-right' : ''}`}
-            >
-              &ldquo;{t.contactQuote}&rdquo;
-            </motion.p>
           </motion.div>
 
           <motion.div
@@ -2042,103 +1880,48 @@ function ContactSection() {
             className={isRTL ? 'lg:order-1' : ''}
           >
             <Card className={`rounded-2xl border-[#d4af37]/20 overflow-hidden ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}>
-              <motion.div
-                className="h-1 bg-gradient-to-r from-[#d4af37] via-[#f59e0b] to-[#d4af37]"
-                animate={{
-                  backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                }}
-                transition={{ duration: 3, repeat: Infinity }}
-                style={{ backgroundSize: "200% 200%" }}
-              />
-              
-              <CardHeader className="p-4 sm:p-6">
-                <CardTitle className={`text-lg sm:text-xl text-gray-900 dark:text-white ${isRTL ? 'text-right' : ''}`}>
-                  {t.contactFormTitle}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 sm:p-6 pt-0">
-                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
-                  {formFields.map((field, index) => (
-                    <motion.div
-                      key={field.name}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={isInView ? { opacity: 1, y: 0 } : {}}
-                      transition={{ delay: 0.4 + index * 0.1 }}
-                      className="form-field-animated relative"
-                    >
-                      <label htmlFor={`contact-${field.name}`} className="sr-only">
-                        {field.placeholder}
-                      </label>
-                      <Input
-                        id={`contact-${field.name}`}
-                        type={field.type}
-                        placeholder={field.placeholder}
-                        value={formData[field.name as keyof typeof formData]}
-                        onChange={(e) =>
-                          setFormData({ ...formData, [field.name]: e.target.value })
-                        }
-                        required
-                        className={`bg-gray-50 dark:bg-gray-800 border-[#d4af37]/20 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-[#d4af37] h-10 sm:h-12 transition-all duration-300 focus:ring-2 focus:ring-[#d4af37]/20 text-sm sm:text-base ${isRTL ? 'text-right' : ''}`}
-                      />
-                    </motion.div>
-                  ))}
-                  
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: 0.7 }}
-                    className="form-field-animated relative"
+              <div className="h-1 bg-gradient-to-r from-[#d4af37] via-[#f59e0b] to-[#d4af37]" />
+
+              <CardContent className={`p-6 sm:p-8 ${isRTL ? 'text-right' : ''}`}>
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                  {t.contactCardTitle}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base leading-relaxed mb-6">
+                  {t.contactCardText}
+                </p>
+
+                <MagneticButton className="w-full">
+                  <Button
+                    asChild
+                    className="w-full bg-[#25D366] hover:bg-[#1eb855] text-white py-6 sm:py-7 text-base sm:text-lg font-bold shadow-lg shadow-green-500/20"
                   >
-                    <label htmlFor="contact-message" className="sr-only">
-                      {t.contactMessagePlaceholder}
-                    </label>
-                    <Textarea
-                      id="contact-message"
-                      placeholder={t.contactMessagePlaceholder}
-                      value={formData.message}
-                      onChange={(e) =>
-                        setFormData({ ...formData, message: e.target.value })
-                      }
-                      required
-                      rows={4}
-                      className={`bg-gray-50 dark:bg-gray-800 border-[#d4af37]/20 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-[#d4af37] resize-none transition-all duration-300 focus:ring-2 focus:ring-[#d4af37]/20 text-sm sm:text-base ${isRTL ? 'text-right' : ''}`}
-                    />
-                  </motion.div>
-                  
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: 0.8 }}
-                  >
-                    <MagneticButton className="w-full">
-                      <Button
-                        type="submit"
-                        className="w-full bg-gradient-to-r from-[#d4af37] to-[#f59e0b] text-white hover:from-[#f59e0b] hover:to-[#d4af37] py-5 sm:py-6 text-sm sm:text-base font-semibold btn-glow relative overflow-hidden group"
-                      >
-                        <span aria-live="polite" className="flex items-center">
-                          {isSubmitted ? (
-                            <motion.span
-                              className="flex items-center"
-                              initial={{ scale: 0.6, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                            >
-                              <CheckCircle className={`w-4 sm:w-5 h-4 sm:h-5 ${isRTL ? 'ml-2' : 'mr-2'}`} aria-hidden="true" />
-                              {t.contactSent}
-                            </motion.span>
-                          ) : (
-                            <>
-                              <Send className={`w-4 sm:w-5 h-4 sm:h-5 group-hover:translate-x-1 transition-transform ${isRTL ? 'ml-2 rotate-180' : 'mr-2'}`} aria-hidden="true" />
-                              {t.contactSend}
-                            </>
-                          )}
-                        </span>
-                      </Button>
-                    </MagneticButton>
-                    <p className={`mt-3 text-xs text-gray-500 dark:text-gray-400 ${isRTL ? 'text-right' : ''}`}>
-                      {t.contactFormNote}
-                    </p>
-                  </motion.div>
-                </form>
+                    <a href={waLink} target="_blank" rel="noopener noreferrer">
+                      <MessageCircle className={`w-5 h-5 ${isRTL ? 'ml-2' : 'mr-2'}`} aria-hidden="true" />
+                      {t.contactChatWhatsApp}
+                    </a>
+                  </Button>
+                </MagneticButton>
+
+                <p className="mt-3 text-xs text-gray-500 dark:text-gray-400 text-center">
+                  {t.contactReply}
+                </p>
+
+                <div className="flex items-center gap-3 my-5" aria-hidden="true">
+                  <span className="flex-1 h-px bg-[#d4af37]/15" />
+                  <span className="text-xs text-gray-400">•</span>
+                  <span className="flex-1 h-px bg-[#d4af37]/15" />
+                </div>
+
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full border-[#d4af37]/40 text-[#d4af37] hover:bg-[#d4af37]/10 text-sm"
+                >
+                  <a href="mailto:gamalabdlhafez263@gmail.com">
+                    <Mail className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} aria-hidden="true" />
+                    {t.contactSendEmail}
+                  </a>
+                </Button>
               </CardContent>
             </Card>
           </motion.div>
@@ -2229,7 +2012,7 @@ function Footer() {
             whileInView={{ opacity: 1, x: 0 }}
             className={`text-gray-500 text-xs sm:text-sm text-center ${isRTL ? 'md:text-left' : 'md:text-right'}`}
           >
-            {t.footerCopyright}
+            © {new Date().getFullYear()} {t.footerName}. {t.footerCopyright}
           </motion.p>
         </div>
 
@@ -2239,29 +2022,9 @@ function Footer() {
           transition={{ delay: 0.5 }}
           className="text-center mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-[#d4af37]/10"
         >
-          <p className="text-gray-500 text-xs sm:text-sm flex items-center justify-center gap-1.5 flex-wrap">
-            <span className="flex items-center gap-1.5">
-              {t.footerMadeWith}
-              <span className="text-[#d4af37] font-medium">Next.js</span>
-              <span className="text-gray-400">&</span>
-              <span className="text-[#d4af37] font-medium">Framer Motion</span>
-            </span>
+          <p className="text-gray-500 text-xs">
+            {t.footerDesignBy}
           </p>
-          <motion.p
-            className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm flex items-center justify-center gap-2 mt-2"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.7 }}
-          >
-            <span className="text-gray-500">{t.footerDesignBy}</span>
-            <span className="text-[#d4af37] font-semibold">Gemo</span>
-            <motion.span
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 1, repeat: Infinity }}
-            >
-              💜
-            </motion.span>
-          </motion.p>
         </motion.div>
       </div>
 

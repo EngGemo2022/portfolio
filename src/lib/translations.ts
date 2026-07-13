@@ -197,12 +197,6 @@ export interface Translations {
   certTitle1: string;
   certTitle2: string;
   certDescription: string;
-  certFilterAll: string;
-  certCategoryDegree: string;
-  certCategoryAI: string;
-  certCategorySecurity: string;
-  certCategoryMarketing: string;
-  certCategoryDigital: string;
   certView: string;
   certDownload: string;
   certVerify: string;
@@ -212,7 +206,6 @@ export interface Translations {
   certPrev: string;
   certNext: string;
   certClose: string;
-  certArabicEdition: string;
 
   // Contact
   contactBadge: string;
@@ -226,22 +219,15 @@ export interface Translations {
   contactLocation: string;
   contactChatWhatsApp: string;
   contactSendEmail: string;
-  contactQuote: string;
-  contactFormTitle: string;
-  contactNamePlaceholder: string;
-  contactEmailPlaceholder: string;
-  contactSubjectPlaceholder: string;
-  contactMessagePlaceholder: string;
-  contactSending: string;
-  contactSent: string;
-  contactSend: string;
-  contactFormNote: string;
+  contactCardTitle: string;
+  contactCardText: string;
+  contactWaPrefill: string;
+  contactReply: string;
   
   // Footer
   footerName: string;
   footerTitle: string;
   footerCopyright: string;
-  footerMadeWith: string;
   footerDesignBy: string;
 }
 
@@ -429,17 +415,11 @@ export const translations: Record<Language, Translations> = {
     languageNative: "Native",
     languageVeryGood: "Very Good",
     
-    navCertificates: "Certificates",
+    navCertificates: "Credentials",
     certBadge: "Credentials",
-    certTitle1: "Certificates &",
+    certTitle1: "Education &",
     certTitle2: "Credentials",
-    certDescription: "A Software Engineering degree from Taiz University and verified certificates from IBM, Google, Meta, the University of Michigan, and Edraak — continuous learning across design, technology, and digital skills.",
-    certFilterAll: "All",
-    certCategoryDegree: "University Degree",
-    certCategoryAI: "AI & Development",
-    certCategorySecurity: "Cyber Security",
-    certCategoryMarketing: "Marketing & Business",
-    certCategoryDigital: "Digital Essentials",
+    certDescription: "A Software Engineering degree from Taiz University, plus verified certificates from IBM, Google, Meta, and the University of Michigan.",
     certView: "View Certificate",
     certDownload: "Download Certificate",
     certVerify: "Verify Credential",
@@ -449,7 +429,6 @@ export const translations: Record<Language, Translations> = {
     certPrev: "Previous certificate",
     certNext: "Next certificate",
     certClose: "Close viewer",
-    certArabicEdition: "Arabic Edition",
 
     contactBadge: "Get in Touch",
     contactTitle1: "Let's Work",
@@ -462,22 +441,15 @@ export const translations: Record<Language, Translations> = {
     contactLocation: "Location",
     contactChatWhatsApp: "Chat on WhatsApp",
     contactSendEmail: "Send Email",
-    contactQuote: "Let's build creative and effective digital experiences together.",
-    contactFormTitle: "Send a Message",
-    contactNamePlaceholder: "Your Name",
-    contactEmailPlaceholder: "Your Email",
-    contactSubjectPlaceholder: "Subject",
-    contactMessagePlaceholder: "Your Message",
-    contactSending: "Sending...",
-    contactSent: "Email Draft Ready!",
-    contactSend: "Send Message",
-    contactFormNote: "Submitting opens your email app with the message pre-filled — nothing is sent until you press send there.",
+    contactCardTitle: "Start Your Project",
+    contactCardText: "Tell me what you need — a website, a logo, or a full brand identity. One message is enough to get started.",
+    contactWaPrefill: "Hi Gamal, I have a project I'd like to discuss with you.",
+    contactReply: "Fastest way to reach me. I check WhatsApp daily.",
     
-    footerName: "Gamal Abdlhafez Hamood",
-    footerTitle: "Graphic Designer & Web Designer",
-    footerCopyright: "© 2025 Gamal Abdlhafez Hamood. All rights reserved.",
-    footerMadeWith: "Made with",
-    footerDesignBy: "design by",
+    footerName: "Gamal Abdlhafez",
+    footerTitle: "Web & Brand Designer",
+    footerCopyright: "All rights reserved.",
+    footerDesignBy: "Designed and built by Gamal Abdlhafez",
   },
   ar: {
     navAbout: "حول",
@@ -662,17 +634,11 @@ export const translations: Record<Language, Translations> = {
     languageNative: "اللغة الأم",
     languageVeryGood: "جيد جداً",
     
-    navCertificates: "الشهادات",
-    certBadge: "الاعتمادات",
-    certTitle1: "الشهادات و",
-    certTitle2: "الاعتمادات",
-    certDescription: "شهادة بكالوريوس في هندسة البرمجيات من جامعة تعز وشهادات موثّقة من IBM وGoogle وMeta وجامعة ميشيغان وإدراك — تعلّم مستمر في التصميم والتقنية والمهارات الرقمية.",
-    certFilterAll: "الكل",
-    certCategoryDegree: "الشهادة الجامعية",
-    certCategoryAI: "الذكاء الاصطناعي والبرمجة",
-    certCategorySecurity: "الأمن السيبراني",
-    certCategoryMarketing: "التسويق والأعمال",
-    certCategoryDigital: "المهارات الرقمية",
+    navCertificates: "المؤهلات",
+    certBadge: "المؤهلات",
+    certTitle1: "التعليم و",
+    certTitle2: "المؤهلات",
+    certDescription: "بكالوريوس هندسة برمجيات من جامعة تعز، وشهادات موثّقة من IBM وGoogle وMeta وجامعة ميشيغان.",
     certView: "عرض الشهادة",
     certDownload: "تحميل الشهادة",
     certVerify: "التحقق من الشهادة",
@@ -682,7 +648,6 @@ export const translations: Record<Language, Translations> = {
     certPrev: "الشهادة السابقة",
     certNext: "الشهادة التالية",
     certClose: "إغلاق العارض",
-    certArabicEdition: "النسخة العربية",
 
     contactBadge: "تواصل معي",
     contactTitle1: "لنعمل",
@@ -695,21 +660,14 @@ export const translations: Record<Language, Translations> = {
     contactLocation: "الموقع",
     contactChatWhatsApp: "محادثة واتساب",
     contactSendEmail: "إرسال بريد",
-    contactQuote: "لنبنِ معاً تجارب رقمية إبداعية وفعالة.",
-    contactFormTitle: "أرسل رسالة",
-    contactNamePlaceholder: "اسمك",
-    contactEmailPlaceholder: "بريدك الإلكتروني",
-    contactSubjectPlaceholder: "الموضوع",
-    contactMessagePlaceholder: "رسالتك",
-    contactSending: "جاري الإرسال...",
-    contactSent: "تم تجهيز الرسالة!",
-    contactSend: "إرسال الرسالة",
-    contactFormNote: "عند الإرسال يُفتح تطبيق البريد لديك مع تعبئة الرسالة تلقائياً — لا يُرسل شيء حتى تضغط إرسال هناك.",
+    contactCardTitle: "ابدأ مشروعك",
+    contactCardText: "أخبرني ماذا تحتاج — موقعاً إلكترونياً أو شعاراً أو هوية بصرية كاملة. رسالة واحدة تكفي للبداية.",
+    contactWaPrefill: "مرحباً جمال، لدي مشروع وأرغب بمناقشته معك.",
+    contactReply: "أسرع طريقة للتواصل معي. أتابع الواتساب يومياً.",
     
-    footerName: "جمال عبدالحافظ حمود",
-    footerTitle: "مصمم جرافيك ومصمم ويب",
-    footerCopyright: "© 2025 جمال عبدالحافظ حمود. جميع الحقوق محفوظة.",
-    footerMadeWith: "صنع بـ",
-    footerDesignBy: "تصميم",
+    footerName: "جمال عبدالحافظ",
+    footerTitle: "مصمم مواقع وهويات بصرية",
+    footerCopyright: "جميع الحقوق محفوظة.",
+    footerDesignBy: "تصميم وتطوير جمال عبدالحافظ",
   },
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import Image from "next/image";
 import {
@@ -22,10 +22,7 @@ import {
   certificatePreview,
   certificateThumb,
   type Certificate,
-  type CertificateCategory,
 } from "@/data/certificates";
-
-type FilterId = "all" | CertificateCategory;
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -204,9 +201,6 @@ function CertificateLightbox({
             <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
               {title}
             </h3>
-            {cert.arabicEdition && (
-              <span className="tag-badge">{t.certArabicEdition}</span>
-            )}
           </div>
           <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-3">
             {issuer}
@@ -246,26 +240,13 @@ function CertificateLightbox({
 export function CertificatesSection() {
   const { t, language, isRTL } = useLanguage();
   const { theme } = useTheme();
-  const [filter, setFilter] = useState<FilterId>("all");
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const lastTriggerRef = useRef<HTMLElement | null>(null);
 
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
-  const filters: { id: FilterId; label: string }[] = [
-    { id: "all", label: t.certFilterAll },
-    { id: "degree", label: t.certCategoryDegree },
-    { id: "ai-dev", label: t.certCategoryAI },
-    { id: "security", label: t.certCategorySecurity },
-    { id: "marketing-business", label: t.certCategoryMarketing },
-    { id: "digital", label: t.certCategoryDigital },
-  ];
-
-  const visible = useMemo(
-    () => (filter === "all" ? certificates : certificates.filter((c) => c.category === filter)),
-    [filter]
-  );
+  const visible = certificates;
 
   const openLightbox = (index: number, trigger: HTMLElement) => {
     lastTriggerRef.current = trigger;
@@ -308,34 +289,6 @@ export function CertificatesSection() {
             <BadgeCheck className="w-4 h-4" aria-hidden="true" />
             {certificates.length} {t.certCount}
           </p>
-        </motion.div>
-
-        {/* Filters */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.15 }}
-          role="group"
-          aria-label={t.certBadge}
-          className="flex flex-wrap justify-center gap-2 mb-10 sm:mb-12"
-        >
-          {filters.map((f) => (
-            <button
-              key={f.id}
-              type="button"
-              onClick={() => setFilter(f.id)}
-              aria-pressed={filter === f.id}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d4af37] ${
-                filter === f.id
-                  ? "bg-[#d4af37] text-white border-[#d4af37] shadow-md shadow-amber-500/20"
-                  : `border-[#d4af37]/25 text-gray-600 dark:text-gray-300 hover:border-[#d4af37]/60 hover:text-[#d4af37] ${
-                      theme === "dark" ? "bg-gray-900/60" : "bg-white"
-                    }`
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
         </motion.div>
 
         {/* Gallery */}
@@ -407,7 +360,6 @@ export function CertificatesSection() {
                       </div>
                       <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white leading-snug mb-1.5 group-hover:text-[#d4af37] transition-colors">
                         {title}
-                        {cert.arabicEdition ? ` — ${t.certArabicEdition}` : ""}
                       </h3>
                       <p className="text-xs text-gray-500 dark:text-gray-400">
                         {t.certIssued} {language === "ar" ? cert.dateLabel.ar : cert.dateLabel.en}

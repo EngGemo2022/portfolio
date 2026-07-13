@@ -1,29 +1,29 @@
 /**
- * Certificates & credentials.
+ * Education & credentials.
  *
- * Every entry maps to three assets generated from the original PDF:
- *   /certificates/files/{slug}.pdf      — original certificate (download)
- *   /certificates/preview/{slug}.webp   — 1600px preview (lightbox)
- *   /certificates/thumb/{slug}.webp     — 640px thumbnail (gallery card)
+ * Every entry maps to assets generated from the original file:
+ *   /certificates/files/{slug}.{pdf|png}  — original certificate (download)
+ *   /certificates/preview/{slug}.webp     — 1600px preview (lightbox)
+ *   /certificates/thumb/{slug}.webp       — 640px thumbnail (gallery card)
  *
  * To add a new certificate: drop the three files in public/certificates/
  * using a new slug, then append an entry here. Only include fields you can
  * verify on the certificate itself — omit anything that is not printed on it.
  */
 
-export type CertificateCategory = "degree" | "ai-dev" | "security" | "marketing-business" | "digital";
+export type CertificateCategory = "degree" | "ai-dev" | "marketing-business";
 
 export interface Certificate {
   slug: string;
   /** Official certificate title exactly as printed. */
   title: string;
-  /** Arabic display title (translation or, for Arabic certificates, the printed title). */
+  /** Arabic display title. */
   titleAr: string;
   /** Organization that authorized the course. */
   issuer: string;
   issuerAr: string;
   /** Delivery platform, when different from the issuer. */
-  platform?: "Coursera" | "Edraak";
+  platform?: "Coursera";
   /** Completion / issue date (ISO), as printed on the certificate. */
   date: string;
   dateLabel: { en: string; ar: string };
@@ -32,8 +32,6 @@ export interface Certificate {
   category: CertificateCategory;
   /** Aspect ratio of the preview image (width / height). */
   aspect: number;
-  /** Marks certificates issued in Arabic. */
-  arabicEdition?: boolean;
   /** Original file extension in /certificates/files/ (defaults to pdf). */
   fileExt?: "pdf" | "png";
 }
@@ -81,31 +79,6 @@ export const certificates: Certificate[] = [
     aspect: 792 / 612,
   },
   {
-    slug: "coursera-cybersecurity-careers",
-    title: "Introduction to Cybersecurity Careers",
-    titleAr: "مقدمة في مهن الأمن السيبراني",
-    issuer: "IBM",
-    issuerAr: "IBM",
-    platform: "Coursera",
-    date: "2025-08-27",
-    dateLabel: { en: "Aug 27, 2025", ar: "٢٧ أغسطس ٢٠٢٥" },
-    credentialId: "FO2LVZMR26MT",
-    credentialUrl: "https://coursera.org/verify/FO2LVZMR26MT",
-    category: "security",
-    aspect: 792 / 612,
-  },
-  {
-    slug: "edraak-cyber-security",
-    title: "Introduction to Cyber Security",
-    titleAr: "مقدمة في الأمن السيبراني",
-    issuer: "Edraak",
-    issuerAr: "إدراك",
-    date: "2025-08-25",
-    dateLabel: { en: "Aug 25, 2025", ar: "٢٥ أغسطس ٢٠٢٥" },
-    category: "security",
-    aspect: 1988 / 1408,
-  },
-  {
     slug: "coursera-project-management",
     title: "Foundations of Project Management",
     titleAr: "أساسيات إدارة المشاريع",
@@ -132,51 +105,6 @@ export const certificates: Certificate[] = [
     credentialUrl: "https://coursera.org/verify/0EJLSI3IGCPY",
     category: "marketing-business",
     aspect: 792 / 612,
-  },
-  {
-    slug: "edraak-computer-fundamentals",
-    title: "Computer Essentials",
-    titleAr: "أساسيات الكمبيوتر",
-    issuer: "Edraak",
-    issuerAr: "إدراك",
-    date: "2025-08-03",
-    dateLabel: { en: "Aug 3, 2025", ar: "٣ أغسطس ٢٠٢٥" },
-    category: "digital",
-    aspect: 1988 / 1408,
-  },
-  {
-    slug: "edraak-internet-email-essentials",
-    title: "Internet & Email Essentials",
-    titleAr: "أساسيات الإنترنت والمراسلات",
-    issuer: "Edraak",
-    issuerAr: "إدراك",
-    date: "2025-08-03",
-    dateLabel: { en: "Aug 3, 2025", ar: "٣ أغسطس ٢٠٢٥" },
-    category: "digital",
-    aspect: 1988 / 1408,
-  },
-  {
-    slug: "edraak-internet-fundamentals",
-    title: "Internet & Email Essentials",
-    titleAr: "أساسيات الإنترنت والمراسلات",
-    issuer: "Edraak",
-    issuerAr: "إدراك",
-    date: "2025-08-03",
-    dateLabel: { en: "Aug 3, 2025", ar: "٣ أغسطس ٢٠٢٥" },
-    category: "digital",
-    aspect: 1988 / 1408,
-    arabicEdition: true,
-  },
-  {
-    slug: "edraak-word-processing",
-    title: "Word Processing",
-    titleAr: "معالجة النصوص",
-    issuer: "Edraak",
-    issuerAr: "إدراك",
-    date: "2025-08-03",
-    dateLabel: { en: "Aug 3, 2025", ar: "٣ أغسطس ٢٠٢٥" },
-    category: "digital",
-    aspect: 1988 / 1408,
   },
 ];
 
