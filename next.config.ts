@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   basePath: "",
   reactStrictMode: false,
   images: {
-    unoptimized: true,
+    formats: ["image/avif", "image/webp"],
   },
 };
 
