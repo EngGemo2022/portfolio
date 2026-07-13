@@ -20,23 +20,28 @@ import {
   ChevronUp,
   Sparkles,
   Layers,
-  Figma,
   Zap,
   Award,
-  GraduationCap,
   Languages as LanguagesIcon,
   ArrowDown,
   Sun,
   Moon,
   ArrowRight,
-  Target,
+  Megaphone,
+  Quote,
+  Clock,
+  CheckCircle2,
+  Briefcase,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { ThemeProvider, LanguageProvider, useTheme, useLanguage } from "@/components/providers";
 import { CertificatesSection } from "@/components/certificates-section";
+import { services, serviceWaLink } from "@/data/services";
+import { caseStudies } from "@/data/projects";
+import { testimonials } from "@/data/testimonials";
 
 // ============================================
 // UTILITY COMPONENTS & HOOKS
@@ -261,7 +266,7 @@ function Navigation() {
 
   // Track which section is in view for the active nav indicator
   useEffect(() => {
-    const ids = ["about", "skills", "projects", "experience", "education", "certificates", "contact"];
+    const ids = ["about", "services", "projects", "experience", "certificates", "contact"];
     const sections = ids
       .map((id) => document.getElementById(id))
       .filter((el): el is HTMLElement => el !== null);
@@ -279,10 +284,9 @@ function Navigation() {
 
   const navLinks = [
     { href: "#about", label: t.navAbout },
-    { href: "#skills", label: t.navSkills },
+    { href: "#services", label: t.navServices },
     { href: "#projects", label: t.navProjects },
     { href: "#experience", label: t.navExperience },
-    { href: "#education", label: t.navEducation },
     { href: "#certificates", label: t.navCertificates },
     { href: "#contact", label: t.navContact },
   ];
@@ -1028,36 +1032,19 @@ function SkillsSection() {
   );
 }
 
-function ProjectsSection() {
-  const { t, isRTL } = useLanguage();
+const serviceIcons = { globe: Globe, palette: Palette, megaphone: Megaphone } as const;
+
+function ServicesSection() {
+  const { t, language, isRTL } = useLanguage();
   const { theme } = useTheme();
-  
-  const projects = [
-    {
-      title: "Sky Najd",
-      image: "/images/projects/skynajd.png",
-      link: "https://skynajd.com/",
-      description: t.projectSkyNajdDesc,
-      role: t.projectSkyNajdRole,
-      tags: [t.projectTagWebsite, t.projectTagBranding, t.projectTagUIDesign],
-    },
-    {
-      title: "Dahanat KSA",
-      image: "/images/projects/dahanatksa.png",
-      link: "https://dahanatksa.com/",
-      description: t.projectDahanatDesc,
-      role: t.projectDahanatRole,
-      tags: [t.projectTagECommerce, t.projectTagResponsive, t.projectTagModern],
-    },
-  ];
 
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <AnimatedSection id="projects" className="py-16 sm:py-24 relative">
-      <div className="absolute inset-0 grid-pattern opacity-10" />
-      
+    <AnimatedSection id="services" className={`py-16 sm:py-24 relative ${theme === "dark" ? "bg-[#0a0a0a]" : "bg-gray-50"}`}>
+      <div className="absolute inset-0 grid-pattern opacity-15" aria-hidden="true" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           ref={ref}
@@ -1066,7 +1053,159 @@ function ProjectsSection() {
           className="text-center mb-12 sm:mb-16"
         >
           <Badge className="bg-[#d4af37]/10 text-[#d4af37] border-[#d4af37]/30 mb-4">
-            <Sparkles className="w-3 h-3 mr-2" />
+            <Sparkles className="w-3 h-3 mr-2" aria-hidden="true" />
+            {t.servicesBadge}
+          </Badge>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            {t.servicesTitle1} <span className="gold-gradient-animated">{t.servicesTitle2}</span>
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-sm sm:text-base">
+            {t.servicesDescription}
+          </p>
+        </motion.div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+          {services.map((service, index) => {
+            const Icon = serviceIcons[service.icon];
+            return (
+              <motion.div
+                key={service.id}
+                initial={{ opacity: 0, y: 40 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: index * 0.12, duration: 0.5 }}
+                className={`flex flex-col rounded-2xl p-6 sm:p-7 border border-[#d4af37]/20 hover-lift ${
+                  theme === "dark" ? "bg-gray-900" : "bg-white"
+                } ${isRTL ? "text-right" : ""}`}
+              >
+                <div className={`flex items-center gap-3 mb-4 ${isRTL ? "flex-row-reverse" : ""}`}>
+                  <span className="w-11 h-11 rounded-xl bg-[#d4af37]/10 flex items-center justify-center shrink-0">
+                    <Icon className="w-5 h-5 text-[#d4af37]" aria-hidden="true" />
+                  </span>
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
+                    {service.title[language]}
+                  </h3>
+                </div>
+
+                <ul className={`space-y-2.5 mb-5 flex-1 list-none p-0 m-0 ${isRTL ? "text-right" : ""}`}>
+                  {service.includes[language].map((item, i) => (
+                    <li key={i} className={`flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300 ${isRTL ? "flex-row-reverse" : ""}`}>
+                      <CheckCircle2 className="w-4 h-4 text-[#d4af37] shrink-0 mt-0.5" aria-hidden="true" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <p className={`flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 mb-4 ${isRTL ? "flex-row-reverse" : ""}`}>
+                  <Clock className="w-3.5 h-3.5" aria-hidden="true" />
+                  {service.timeline[language]}
+                </p>
+
+                <Button
+                  asChild
+                  className="w-full bg-[#25D366] hover:bg-[#1eb855] text-white font-semibold text-sm"
+                >
+                  <a
+                    href={serviceWaLink(service, language)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <MessageCircle className={`w-4 h-4 ${isRTL ? "ml-2" : "mr-2"}`} aria-hidden="true" />
+                    {t.servicesStart}
+                  </a>
+                </Button>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+    </AnimatedSection>
+  );
+}
+
+function TestimonialsSection() {
+  const { t, language, isRTL } = useLanguage();
+  const { theme } = useTheme();
+
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  // Renders nothing until real testimonials exist in src/data/testimonials.ts
+  if (testimonials.length === 0) return null;
+
+  return (
+    <AnimatedSection id="testimonials" className="py-16 sm:py-24 relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <motion.div
+          ref={ref}
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          className="text-center mb-12 sm:mb-16"
+        >
+          <Badge className="bg-[#d4af37]/10 text-[#d4af37] border-[#d4af37]/30 mb-4">
+            <Sparkles className="w-3 h-3 mr-2" aria-hidden="true" />
+            {t.testimonialsBadge}
+          </Badge>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
+            {t.testimonialsTitle1} <span className="gold-gradient-animated">{t.testimonialsTitle2}</span>
+          </h2>
+        </motion.div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+          {testimonials.map((item, index) => (
+            <motion.figure
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: index * 0.12 }}
+              className={`rounded-2xl p-6 border border-[#d4af37]/20 ${
+                theme === "dark" ? "bg-gray-900" : "bg-white"
+              } ${item.featured ? "ring-1 ring-[#d4af37]/40" : ""} ${isRTL ? "text-right" : ""}`}
+            >
+              <Quote className="w-6 h-6 text-[#d4af37]/50 mb-3" aria-hidden="true" />
+              <blockquote className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                {item.quote[language]}
+              </blockquote>
+              <figcaption className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}>
+                {item.image && (
+                  <span className="relative w-10 h-10 rounded-full overflow-hidden shrink-0">
+                    <Image src={item.image} alt={item.name} fill className="object-cover" />
+                  </span>
+                )}
+                <span>
+                  <span className="block text-sm font-semibold text-gray-900 dark:text-white">{item.name}</span>
+                  <span className="block text-xs text-gray-500 dark:text-gray-400">
+                    {item.role[language]} · {item.company}
+                  </span>
+                </span>
+              </figcaption>
+            </motion.figure>
+          ))}
+        </div>
+      </div>
+    </AnimatedSection>
+  );
+}
+
+function ProjectsSection() {
+  const { t, language, isRTL } = useLanguage();
+  const { theme } = useTheme();
+
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  return (
+    <AnimatedSection id="projects" className="py-16 sm:py-24 relative">
+      <div className="absolute inset-0 grid-pattern opacity-10" aria-hidden="true" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <motion.div
+          ref={ref}
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          className="text-center mb-12 sm:mb-16"
+        >
+          <Badge className="bg-[#d4af37]/10 text-[#d4af37] border-[#d4af37]/30 mb-4">
+            <Sparkles className="w-3 h-3 mr-2" aria-hidden="true" />
             {t.projectsBadge}
           </Badge>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -1077,79 +1216,95 @@ function ProjectsSection() {
           </p>
         </motion.div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {projects.map((project, index) => (
-            <motion.div
-              key={index}
+        <div className="grid md:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
+          {caseStudies.map((project, index) => (
+            <motion.article
+              key={project.title}
               initial={{ opacity: 0, y: 50 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: index * 0.2 }}
+              transition={{ delay: index * 0.15 }}
+              className={`group rounded-2xl overflow-hidden border border-[#d4af37]/20 hover-lift ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}
             >
-              <TiltCard>
-                <motion.div
-                  className={`group rounded-2xl overflow-hidden project-card-hover relative border border-[#d4af37]/20 ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}
-                  whileHover={{ y: -10 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <div className="relative h-48 sm:h-56 overflow-hidden">
-                    <motion.div
-                      className="absolute inset-0"
-                      whileHover={{ scale: 1.1 }}
-                      transition={{ duration: 0.6 }}
+              {/* Screenshots: desktop + optional mobile */}
+              <div className="relative h-52 sm:h-60 overflow-hidden">
+                <Image
+                  src={project.image}
+                  alt={`${project.title} — ${language === "ar" ? "لقطة من الموقع" : "website screenshot"}`}
+                  fill
+                  className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.04]"
+                />
+                {project.mobileImage && (
+                  <span className={`absolute bottom-0 ${isRTL ? "left-4" : "right-4"} w-20 sm:w-24 rounded-t-xl overflow-hidden border-2 border-[#d4af37]/40 shadow-xl`}>
+                    <Image
+                      src={project.mobileImage}
+                      alt={`${project.title} — ${language === "ar" ? "عرض الجوال" : "mobile view"}`}
+                      width={96}
+                      height={200}
+                      className="object-cover"
+                    />
+                  </span>
+                )}
+                <div className={`absolute inset-0 bg-gradient-to-t ${theme === "dark" ? "from-gray-900/80" : "from-white/80"} via-transparent to-transparent`} aria-hidden="true" />
+                <div className={`absolute top-4 ${isRTL ? "left-4" : "right-4"} flex gap-2 flex-wrap`}>
+                  {project.tags[language].map((tag, i) => (
+                    <span
+                      key={i}
+                      className="text-xs px-2 py-1 bg-black/55 backdrop-blur-sm text-[#d4af37] rounded-full border border-[#d4af37]/30"
                     >
-                      <Image
-                        src={project.image}
-                        alt={project.title}
-                        fill
-                        className="object-cover"
-                      />
-                    </motion.div>
-                    <div className={`absolute inset-0 bg-gradient-to-t ${theme === "dark" ? "from-gray-900" : "from-white"} via-transparent to-transparent`} />
-                    
-                    <div className={`absolute top-4 ${isRTL ? 'left-4' : 'right-4'} flex gap-2 flex-wrap`}>
-                      {project.tags.map((tag, i) => (
-                        <motion.span
-                          key={i}
-                          initial={{ opacity: 0, scale: 0 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: 0.5 + i * 0.1 }}
-                          className="text-xs px-2 py-1 bg-black/50 dark:bg-black/80 backdrop-blur-sm text-[#d4af37] rounded-full border border-[#d4af37]/30"
-                        >
-                          {tag}
-                        </motion.span>
-                      ))}
-                    </div>
-                  </div>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
 
-                  <div className="p-4 sm:p-6 relative">
-                    <motion.h3
-                      className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-[#d4af37] transition-colors"
-                      layout
-                    >
-                      {project.title}
-                    </motion.h3>
-                    <p className="text-xs sm:text-sm text-[#d4af37] mb-2 sm:mb-3">{project.role}</p>
-                    <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm mb-4 line-clamp-3">
-                      {project.description}
-                    </p>
-                    
-                    <Button
-                      asChild
-                      className="w-full bg-transparent border-2 border-[#d4af37] text-[#d4af37] hover:bg-[#d4af37] hover:text-white font-semibold group/btn text-sm transition-all duration-300"
-                    >
-                      <a
-                        href={project.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <ExternalLink className={`w-4 h-4 group-hover/btn:rotate-45 transition-transform ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                        {t.projectVisitWebsite}
-                      </a>
-                    </Button>
+              {/* Case study body */}
+              <div className={`p-5 sm:p-6 ${isRTL ? "text-right" : ""}`}>
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-[#d4af37] transition-colors">
+                  {project.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-[#d4af37] mb-3">{project.role[language]}</p>
+
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  {project.context[language]}
+                </p>
+
+                {project.problem && (
+                  <div className="mb-4">
+                    <h4 className="section-label text-gray-500 dark:text-gray-400 mb-1">{t.caseProblem}</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{project.problem[language]}</p>
                   </div>
-                </motion.div>
-              </TiltCard>
-            </motion.div>
+                )}
+
+                <h4 className="section-label text-gray-500 dark:text-gray-400 mb-2">{t.caseDid}</h4>
+                <ul className={`space-y-1.5 mb-4 list-none p-0 m-0`}>
+                  {project.did[language].map((item, i) => (
+                    <li key={i} className={`flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300 ${isRTL ? "flex-row-reverse" : ""}`}>
+                      <CheckCircle2 className="w-4 h-4 text-[#d4af37] shrink-0 mt-0.5" aria-hidden="true" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {project.outcome && (
+                  <p className={`text-sm font-medium text-gray-900 dark:text-white bg-[#d4af37]/8 border border-[#d4af37]/25 rounded-lg px-3 py-2 mb-4 ${isRTL ? "text-right" : ""}`}>
+                    <span className="text-[#d4af37]">{t.caseOutcome}: </span>
+                    {project.outcome[language]}
+                  </p>
+                )}
+
+                {project.link && (
+                  <Button
+                    asChild
+                    className="w-full bg-transparent border-2 border-[#d4af37] text-[#d4af37] hover:bg-[#d4af37] hover:text-white font-semibold group/btn text-sm transition-all duration-300"
+                  >
+                    <a href={project.link} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className={`w-4 h-4 group-hover/btn:rotate-45 transition-transform ${isRTL ? "ml-2" : "mr-2"}`} aria-hidden="true" />
+                      {t.projectVisitWebsite}
+                    </a>
+                  </Button>
+                )}
+              </div>
+            </motion.article>
           ))}
         </div>
       </div>
@@ -1276,10 +1431,11 @@ function GraphicDesignWorksSection() {
             width: "fit-content",
           }}
         >
-          {/* Duplicate items for seamless loop */}
+          {/* Duplicate items for seamless loop — clones hidden from assistive tech */}
           {[...designs, ...designs, ...designs].map((design, index) => (
             <motion.div
               key={index}
+              aria-hidden={index >= designs.length}
               className="group relative flex-shrink-0 cursor-pointer"
               whileHover={{ scale: 1.05, y: -10 }}
               transition={{ type: "spring", stiffness: 300 }}
@@ -1452,63 +1608,19 @@ function GraphicDesignWorksSection() {
   );
 }
 
-// New Impressive Experience Section
 function ExperienceSection() {
   const { t, isRTL } = useLanguage();
   const { theme } = useTheme();
-  
-  const experiences = [
-    { 
-      icon: Monitor, 
-      title: t.expUIWeb, 
-      description: "Creating intuitive and visually appealing web interfaces",
-      color: "#d4af37",
-      gradient: "from-[#d4af37] to-[#f59e0b]"
-    },
-    { 
-      icon: Palette, 
-      title: t.expGraphicDesign, 
-      description: "Brand identity, marketing materials, and visual communication",
-      color: "#f59e0b",
-      gradient: "from-[#f59e0b] to-[#fbbf24]"
-    },
-    { 
-      icon: Smartphone, 
-      title: t.expResponsiveWebsites, 
-      description: "Mobile-first designs that work flawlessly across all devices",
-      color: "#fbbf24",
-      gradient: "from-[#fbbf24] to-[#d4af37]"
-    },
-    { 
-      icon: Target, 
-      title: t.expUsability, 
-      description: "Optimizing user flows and improving conversion rates",
-      color: "#d4af37",
-      gradient: "from-[#d4af37] to-[#f59e0b]"
-    },
-    { 
-      icon: Figma, 
-      title: t.expInterface, 
-      description: "Clean, organized, and scalable UI components",
-      color: "#f59e0b",
-      gradient: "from-[#f59e0b] to-[#fbbf24]"
-    },
-    { 
-      icon: Layers, 
-      title: t.expBranding, 
-      description: "Visual storytelling that strengthens brand identity",
-      color: "#fbbf24",
-      gradient: "from-[#fbbf24] to-[#d4af37]"
-    },
-  ];
 
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
+  const work = [t.expWork1, t.expWork2, t.expWork3];
+
   return (
     <AnimatedSection id="experience" className={`py-16 sm:py-24 relative ${theme === "dark" ? "bg-[#0a0a0a]" : "bg-gray-50"}`}>
-      <div className="absolute inset-0 grid-pattern opacity-15" />
-      
+      <div className="absolute inset-0 grid-pattern opacity-15" aria-hidden="true" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           ref={ref}
@@ -1517,176 +1629,56 @@ function ExperienceSection() {
           className="text-center mb-12 sm:mb-16"
         >
           <Badge className="bg-[#d4af37]/10 text-[#d4af37] border-[#d4af37]/30 mb-4">
-            <Sparkles className="w-3 h-3 mr-2" />
+            <Sparkles className="w-3 h-3 mr-2" aria-hidden="true" />
             {t.experienceBadge}
           </Badge>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             {t.experienceTitle1} <span className="gold-gradient-animated">{t.experienceTitle2}</span>
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-2 text-sm sm:text-base">
-            {t.experienceSubtitle}
-          </p>
         </motion.div>
 
-        {/* Experience Cards Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {experiences.map((exp, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 50, scale: 0.9 }}
-              animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
-            >
-              <motion.div
-                className={`group relative rounded-2xl p-5 sm:p-6 overflow-hidden border border-[#d4af37]/20 ${
-                  theme === "dark" ? "bg-gray-900/50" : "bg-white"
-                }`}
-                whileHover={{ y: -8, scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                {/* Gradient background on hover */}
-                <motion.div
-                  className={`absolute inset-0 bg-gradient-to-br ${exp.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}
-                />
-                
-                {/* Animated border */}
-                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <div className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${exp.gradient} p-[1px]`}>
-                    <div className={`w-full h-full rounded-2xl ${theme === "dark" ? "bg-gray-900" : "bg-white"}`} />
-                  </div>
-                </div>
-                
-                {/* Content */}
-                <div className="relative z-10">
-                  <div className={`flex items-start gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <motion.div
-                      className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center shrink-0 relative overflow-hidden"
-                      style={{ background: `linear-gradient(135deg, ${exp.color}20, ${exp.color}10)` }}
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      transition={{ type: "spring", stiffness: 400 }}
-                    >
-                      <motion.div
-                        className="absolute inset-0"
-                        style={{ background: `radial-gradient(circle at center, ${exp.color}30, transparent)` }}
-                        animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                      />
-                      <exp.icon className="w-6 h-6 sm:w-7 sm:h-7 relative z-10" style={{ color: exp.color }} />
-                    </motion.div>
-                    
-                    <div className={`flex-1 ${isRTL ? 'text-right' : ''}`}>
-                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white group-hover:text-[#d4af37] transition-colors mb-1 sm:mb-2">
-                        {exp.title}
-                      </h3>
-                      <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                        {exp.description}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  {/* Arrow indicator */}
-                  <motion.div
-                    className={`absolute bottom-4 ${isRTL ? 'left-4' : 'right-4'} opacity-0 group-hover:opacity-100 transition-opacity`}
-                    initial={{ x: isRTL ? -10 : 10 }}
-                    whileHover={{ x: isRTL ? 0 : 0 }}
-                  >
-                    <ArrowRight className={`w-5 h-5 text-[#d4af37] ${isRTL ? 'rotate-180' : ''}`} />
-                  </motion.div>
-                </div>
-              </motion.div>
-            </motion.div>
-          ))}
-        </div>
-
-      </div>
-    </AnimatedSection>
-  );
-}
-
-function EducationSection() {
-  const { t, isRTL } = useLanguage();
-  const { theme } = useTheme();
-  
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-
-  return (
-    <AnimatedSection id="education" className="py-16 sm:py-24 relative">
-      <div className="absolute inset-0 grid-pattern opacity-10" />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Timeline */}
         <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          className="text-center mb-12 sm:mb-16"
-        >
-          <Badge className="bg-[#d4af37]/10 text-[#d4af37] border-[#d4af37]/30 mb-4">
-            <Sparkles className="w-3 h-3 mr-2" />
-            {t.educationBadge}
-          </Badge>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            {t.educationTitle1} <span className="gold-gradient-animated">{t.educationTitle2}</span>
-          </h2>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.2 }}
-          className="max-w-2xl mx-auto"
+          className="max-w-3xl mx-auto"
         >
-          <TiltCard>
-            <Card className={`rounded-2xl border-[#d4af37]/20 card-hover overflow-hidden group ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}>
-              <motion.div
-                className="h-1 bg-gradient-to-r from-[#d4af37] via-[#f59e0b] to-[#d4af37]"
-                initial={{ scaleX: 0 }}
-                animate={isInView ? { scaleX: 1 } : {}}
-                transition={{ duration: 1, delay: 0.5 }}
-              />
-              
-              <CardHeader className="pb-2 p-4 sm:p-6">
-                <div className={`flex items-center gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <motion.div
-                    className="w-12 h-12 sm:w-16 sm:h-16 bg-[#d4af37]/10 rounded-xl flex items-center justify-center relative overflow-hidden shrink-0"
-                    whileHover={{ scale: 1.1 }}
-                  >
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-br from-[#d4af37]/20 to-transparent"
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                    />
-                    <GraduationCap className="w-6 h-6 sm:w-8 sm:h-8 text-[#d4af37] relative z-10" />
-                  </motion.div>
-                  <div className={isRTL ? 'text-right' : ''}>
-                    <CardTitle className="text-lg sm:text-xl text-gray-900 dark:text-white group-hover:text-[#d4af37] transition-colors">
-                      {t.educationDegree}
-                    </CardTitle>
-                    <CardDescription className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
-                      {t.educationUniversity}
-                    </CardDescription>
-                  </div>
+          <article className={`relative rounded-2xl p-6 sm:p-8 border border-[#d4af37]/20 ${theme === "dark" ? "bg-gray-900" : "bg-white"} ${isRTL ? "text-right" : ""}`}>
+            <div className={`flex flex-wrap items-start justify-between gap-3 mb-4 ${isRTL ? "flex-row-reverse" : ""}`}>
+              <div className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}>
+                <span className="w-12 h-12 rounded-xl bg-[#d4af37]/10 flex items-center justify-center shrink-0">
+                  <Briefcase className="w-6 h-6 text-[#d4af37]" aria-hidden="true" />
+                </span>
+                <div>
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
+                    {t.expRole}
+                  </h3>
+                  <p className="text-sm text-[#d4af37] font-medium">{t.expPeriod}</p>
                 </div>
-              </CardHeader>
-              
-              <CardContent className="p-4 sm:p-6 pt-0">
-                <motion.div
-                  className={`flex items-center gap-2 text-[#d4af37] ${isRTL ? 'flex-row-reverse' : ''}`}
-                  initial={{ opacity: 0, x: isRTL ? 20 : -20 }}
+              </div>
+            </div>
+
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-5">
+              {t.expScope}
+            </p>
+
+            <h4 className="section-label text-gray-500 dark:text-gray-400 mb-3">{t.expWorkLabel}</h4>
+            <ul className="space-y-2.5 list-none p-0 m-0">
+              {work.map((item, i) => (
+                <motion.li
+                  key={i}
+                  initial={{ opacity: 0, x: isRTL ? 16 : -16 }}
                   animate={isInView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ delay: 0.7 }}
+                  transition={{ delay: 0.35 + i * 0.1 }}
+                  className={`flex items-start gap-2.5 text-sm sm:text-base text-gray-700 dark:text-gray-300 ${isRTL ? "flex-row-reverse" : ""}`}
                 >
-                  <motion.div
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    <Award className="w-5 h-5" />
-                  </motion.div>
-                  <span className="font-medium text-sm sm:text-base">{t.educationGraduated}</span>
-                </motion.div>
-              </CardContent>
-            </Card>
-          </TiltCard>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#d4af37] shrink-0 mt-2" aria-hidden="true" />
+                  <span>{item}</span>
+                </motion.li>
+              ))}
+            </ul>
+          </article>
         </motion.div>
       </div>
     </AnimatedSection>
@@ -2072,11 +2064,12 @@ function PortfolioContent() {
       <Navigation />
       <HeroSection />
       <AboutSection />
-      <SkillsSection />
+      <ServicesSection />
       <ProjectsSection />
+      <TestimonialsSection />
       <GraphicDesignWorksSection />
+      <SkillsSection />
       <ExperienceSection />
-      <EducationSection />
       <CertificatesSection />
       <LanguagesSection />
       <ContactSection />

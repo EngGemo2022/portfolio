@@ -83,6 +83,24 @@ export interface Translations {
   skillCommunication: string;
   skillFastLearning: string;
   
+  // Services
+  navServices: string;
+  servicesBadge: string;
+  servicesTitle1: string;
+  servicesTitle2: string;
+  servicesDescription: string;
+  servicesStart: string;
+
+  // Case-study labels
+  caseProblem: string;
+  caseDid: string;
+  caseOutcome: string;
+
+  // Testimonials
+  testimonialsBadge: string;
+  testimonialsTitle1: string;
+  testimonialsTitle2: string;
+
   // Projects
   projectsBadge: string;
   projectsTitle1: string;
@@ -166,13 +184,13 @@ export interface Translations {
   experienceBadge: string;
   experienceTitle1: string;
   experienceTitle2: string;
-  experienceSubtitle: string;
-  expUIWeb: string;
-  expGraphicDesign: string;
-  expResponsiveWebsites: string;
-  expUsability: string;
-  expInterface: string;
-  expBranding: string;
+  expRole: string;
+  expPeriod: string;
+  expScope: string;
+  expWorkLabel: string;
+  expWork1: string;
+  expWork2: string;
+  expWork3: string;
   
   // Education
   educationBadge: string;
@@ -311,6 +329,21 @@ export const translations: Record<Language, Translations> = {
     skillCommunication: "Communication",
     skillFastLearning: "Fast Learning",
     
+    navServices: "Services",
+    servicesBadge: "Services",
+    servicesTitle1: "What I",
+    servicesTitle2: "Offer",
+    servicesDescription: "Three clear offers. Pick one, message me on WhatsApp, and we start.",
+    servicesStart: "Start on WhatsApp",
+
+    caseProblem: "The Problem",
+    caseDid: "What I Did",
+    caseOutcome: "Result",
+
+    testimonialsBadge: "Testimonials",
+    testimonialsTitle1: "What Clients",
+    testimonialsTitle2: "Say",
+
     projectsBadge: "Portfolio",
     projectsTitle1: "Featured",
     projectsTitle2: "Projects",
@@ -390,15 +423,15 @@ export const translations: Record<Language, Translations> = {
     designCreative20Desc: "Complete brand design solution that transforms brand identity into visual excellence.",
 
     experienceBadge: "Experience",
-    experienceTitle1: "Digital Design &",
-    experienceTitle2: "Web Projects",
-    experienceSubtitle: "Independent / Practical Projects",
-    expUIWeb: "UI-Focused Web Design",
-    expGraphicDesign: "Graphic Design",
-    expResponsiveWebsites: "Responsive Websites",
-    expUsability: "Usability Improvement",
-    expInterface: "Interface Organization",
-    expBranding: "Branding Support Through Visuals",
+    experienceTitle1: "Work",
+    experienceTitle2: "Experience",
+    expRole: "Independent Web & Brand Designer",
+    expPeriod: "2023 — Present",
+    expScope: "Websites, brand identities, and social media design for businesses in Saudi Arabia.",
+    expWorkLabel: "Selected work",
+    expWork1: "Sky Najd — corporate business website",
+    expWork2: "Dahanat KSA — commercial website with brand identity",
+    expWork3: "Logos & brand identities — real estate, coffee, legal, skincare, and fashion businesses",
     
     educationBadge: "Education",
     educationTitle1: "Academic",
@@ -530,6 +563,21 @@ export const translations: Record<Language, Translations> = {
     skillCommunication: "التواصل",
     skillFastLearning: "التعلم السريع",
     
+    navServices: "الخدمات",
+    servicesBadge: "الخدمات",
+    servicesTitle1: "ماذا",
+    servicesTitle2: "أقدّم",
+    servicesDescription: "ثلاث خدمات واضحة. اختر ما يناسبك، راسلني على واتساب، ونبدأ.",
+    servicesStart: "ابدأ عبر واتساب",
+
+    caseProblem: "التحدي",
+    caseDid: "ماذا عملت",
+    caseOutcome: "النتيجة",
+
+    testimonialsBadge: "آراء العملاء",
+    testimonialsTitle1: "ماذا يقول",
+    testimonialsTitle2: "العملاء",
+
     projectsBadge: "أعمالي",
     projectsTitle1: "مشاريع",
     projectsTitle2: "مميزة",
@@ -609,15 +657,15 @@ export const translations: Record<Language, Translations> = {
     designCreative20Desc: "حل تصميم كامل للعلامة التجارية يحول هوية العلامة إلى تميز بصري.",
 
     experienceBadge: "الخبرة",
-    experienceTitle1: "التصميم الرقمي و",
-    experienceTitle2: "مشاريع الويب",
-    experienceSubtitle: "مشاريع مستقلة / عملية",
-    expUIWeb: "تصميم ويب مركز على واجهة المستخدم",
-    expGraphicDesign: "تصميم جرافيك",
-    expResponsiveWebsites: "مواقع متجاوبة",
-    expUsability: "تحسين سهولة الاستخدام",
-    expInterface: "تنظيم الواجهات",
-    expBranding: "دعم العلامة التجارية عبر المرئيات",
+    experienceTitle1: "الخبرة",
+    experienceTitle2: "العملية",
+    expRole: "مصمم مواقع وهويات بصرية مستقل",
+    expPeriod: "2023 — حتى الآن",
+    expScope: "تصميم مواقع وهويات بصرية وتصاميم سوشيال ميديا لأنشطة تجارية في السعودية.",
+    expWorkLabel: "أعمال مختارة",
+    expWork1: "سكاي نجد — موقع أعمال تعريفي",
+    expWork2: "دهانات السعودية — موقع تجاري مع هوية بصرية",
+    expWork3: "شعارات وهويات بصرية — عقارات، قهوة، محاماة، عناية بالبشرة، وأزياء",
     
     educationBadge: "التعليم",
     educationTitle1: "الخلفية",
