@@ -92,8 +92,6 @@ export interface Translations {
   projectSkyNajdRole: string;
   projectDahanatDesc: string;
   projectDahanatRole: string;
-  projectJarashDesc: string;
-  projectJarashRole: string;
   projectVisitWebsite: string;
   projectTagWebsite: string;
   projectTagBranding: string;
@@ -335,8 +333,6 @@ export const translations: Record<Language, Translations> = {
     projectSkyNajdRole: "Web Designer / Digital Designer",
     projectDahanatDesc: "A modern commercial website with a strong visual identity, structured sections, and responsive presentation tailored for a business audience.",
     projectDahanatRole: "Web Designer / Brand-Focused Digital Designer",
-    projectJarashDesc: "A live website project showcasing practical website design, organized content layout, and responsive user experience across devices.",
-    projectJarashRole: "Website Designer / Frontend-Focused Digital Creative",
     projectVisitWebsite: "Visit Website",
     projectTagWebsite: "Website",
     projectTagBranding: "Branding",
@@ -570,8 +566,6 @@ export const translations: Record<Language, Translations> = {
     projectSkyNajdRole: "مصمم ويب / مصمم رقمي",
     projectDahanatDesc: "موقع تجاري حديث بهوية بصرية قوية وأقسام منظمة وعرض متجاوب مخصص للجمهور التجاري.",
     projectDahanatRole: "مصمم ويب / مصمم رقمي متخصص في العلامات التجارية",
-    projectJarashDesc: "مشروع موقع حي يعرض تصميم المواقع العملي وتخطيط المحتوى المنظم وتجربة المستخدم المتجاوبة عبر الأجهزة.",
-    projectJarashRole: "مصمم مواقع / مبدع رقمي متخصص في الواجهات",
     projectVisitWebsite: "زيارة الموقع",
     projectTagWebsite: "موقع",
     projectTagBranding: "هوية",

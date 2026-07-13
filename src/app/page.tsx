@@ -1104,14 +1104,6 @@ function ProjectsSection() {
       role: t.projectDahanatRole,
       tags: [t.projectTagECommerce, t.projectTagResponsive, t.projectTagModern],
     },
-    {
-      title: "Jarash",
-      image: "/images/projects/jarash.png",
-      link: "https://jarash.gt.tc/",
-      description: t.projectJarashDesc,
-      role: t.projectJarashRole,
-      tags: [t.projectTagFrontend, t.projectTagUX, t.projectTagResponsive],
-    },
   ];
 
   const ref = useRef(null);
