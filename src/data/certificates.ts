@@ -106,6 +106,20 @@ export const certificates: Certificate[] = [
     category: "marketing-business",
     aspect: 792 / 612,
   },
+  {
+    slug: "coursera-english-for-career-development",
+    title: "English for Career Development",
+    titleAr: "اللغة الإنجليزية للتطور المهني",
+    issuer: "University of Pennsylvania",
+    issuerAr: "جامعة بنسلفانيا",
+    platform: "Coursera",
+    date: "2026-07-18",
+    dateLabel: { en: "Jul 18, 2026", ar: "١٨ يوليو ٢٠٢٦" },
+    credentialId: "6V9R2UWFX5R1",
+    credentialUrl: "https://coursera.org/verify/6V9R2UWFX5R1",
+    category: "marketing-business",
+    aspect: 792 / 612,
+  },
 ];
 
 export const certificateFile = (slug: string, ext: "pdf" | "png" = "pdf") =>
