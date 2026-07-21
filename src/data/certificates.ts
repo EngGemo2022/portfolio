@@ -11,7 +11,7 @@
  * verify on the certificate itself — omit anything that is not printed on it.
  */
 
-export type CertificateCategory = "degree" | "ai-dev" | "marketing-business";
+export type CertificateCategory = "degree" | "ai-dev" | "marketing-business" | "data-analysis";
 
 export interface Certificate {
   slug: string;
@@ -118,6 +118,20 @@ export const certificates: Certificate[] = [
     credentialId: "6V9R2UWFX5R1",
     credentialUrl: "https://coursera.org/verify/6V9R2UWFX5R1",
     category: "marketing-business",
+    aspect: 792 / 612,
+  },
+  {
+    slug: "coursera-data-analysis-excel",
+    title: "Introduction to Data Analysis Using Excel",
+    titleAr: "مقدمة في تحليل البيانات باستخدام إكسل",
+    issuer: "Rice University",
+    issuerAr: "جامعة رايس",
+    platform: "Coursera",
+    date: "2026-07-21",
+    dateLabel: { en: "Jul 21, 2026", ar: "٢١ يوليو ٢٠٢٦" },
+    credentialId: "PSNQQZAM79HZ",
+    credentialUrl: "https://coursera.org/verify/PSNQQZAM79HZ",
+    category: "data-analysis",
     aspect: 792 / 612,
   },
 ];
