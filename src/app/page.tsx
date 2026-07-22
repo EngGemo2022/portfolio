@@ -37,6 +37,8 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { ThemeProvider, LanguageProvider, useTheme, useLanguage } from "@/components/providers";
 import { CertificatesSection } from "@/components/certificates-section";
+import { CountUp } from "@/components/count-up";
+import { FadeIn } from "@/components/fade-in";
 import { services, serviceWaLink } from "@/data/services";
 import { caseStudies } from "@/data/projects";
 
@@ -454,9 +456,9 @@ function HeroSection() {
   const opacity = useTransform(scrollY, [0, 300], [1, 0]);
 
   const stats = [
-    { value: "3+", label: t.aboutYearsExperience },
-    { value: "20+", label: t.aboutProjectsDone },
-    { value: "15+", label: t.aboutHappyClients },
+    { value: 3, suffix: "+", label: t.aboutYearsExperience },
+    { value: 20, suffix: "+", label: t.aboutProjectsDone },
+    { value: 15, suffix: "+", label: t.aboutHappyClients },
   ];
 
   return (
@@ -657,7 +659,9 @@ function HeroSection() {
                   transition={{ delay: 0.8 + i * 0.15 }}
                   className="text-center"
                 >
-                  <div className="text-2xl sm:text-3xl font-bold gold-gradient-animated font-display">{stat.value}</div>
+                  <div className="text-2xl sm:text-3xl font-bold gold-gradient-animated font-display">
+                    <CountUp value={stat.value} suffix={stat.suffix} />
+                  </div>
                   <div className="text-xs text-gray-400 mt-0.5 whitespace-nowrap">{stat.label}</div>
                 </motion.div>
               ))}
@@ -1076,36 +1080,42 @@ function ProjectsSection() {
 
         <div className="grid md:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
           {caseStudies.map((project, index) => (
-            <motion.article
+            <article
               key={project.title}
-              initial={{ opacity: 0, y: 50 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: index * 0.15 }}
               className={`group rounded-2xl overflow-hidden border border-[#d4af37]/20 hover-lift ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}
             >
               <div className="relative h-52 sm:h-60 overflow-hidden">
-                <Image
-                  src={project.image}
-                  alt={`${project.title} — ${language === "ar" ? "لقطة من الموقع" : "website screenshot"}`}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 512px"
-                  className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.04]"
-                />
-                <div className={`absolute inset-0 bg-gradient-to-t ${theme === "dark" ? "from-gray-900/80" : "from-white/80"} via-transparent to-transparent`} aria-hidden="true" />
-                <div className={`absolute top-4 ${isRTL ? "left-4" : "right-4"} flex gap-2 flex-wrap`}>
-                  {project.tags[language].map((tag, i) => (
-                    <span
-                      key={i}
-                      className="text-xs px-2 py-1 bg-black/55 backdrop-blur-sm text-[#d4af37] rounded-full border border-[#d4af37]/30"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+                {/* Screenshot slides in from the inline-start side (flips in RTL) */}
+                <motion.div
+                  className="absolute inset-0"
+                  initial={{ opacity: 0, x: isRTL ? 24 : -24 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ duration: 0.55, delay: index * 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+                >
+                  <Image
+                    src={project.image}
+                    alt={`${project.title} — ${language === "ar" ? "لقطة من الموقع" : "website screenshot"}`}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 512px"
+                    className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.04]"
+                  />
+                  <div className={`absolute inset-0 bg-gradient-to-t ${theme === "dark" ? "from-gray-900/80" : "from-white/80"} via-transparent to-transparent`} aria-hidden="true" />
+                  <div className={`absolute top-4 ${isRTL ? "left-4" : "right-4"} flex gap-2 flex-wrap`}>
+                    {project.tags[language].map((tag, i) => (
+                      <span
+                        key={i}
+                        className="text-xs px-2 py-1 bg-black/55 backdrop-blur-sm text-[#d4af37] rounded-full border border-[#d4af37]/30"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </motion.div>
               </div>
 
               {/* Case study body */}
-              <div className={`p-5 sm:p-6 ${isRTL ? "text-right" : ""}`}>
+              <FadeIn delay={index * 0.1 + 0.15} distance={16} className={`p-5 sm:p-6 ${isRTL ? "text-right" : ""}`}>
                 <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-[#d4af37] transition-colors">
                   {project.title}
                 </h3>
@@ -1136,8 +1146,8 @@ function ProjectsSection() {
                     </a>
                   </Button>
                 )}
-              </div>
-            </motion.article>
+              </FadeIn>
+            </article>
           ))}
         </div>
       </div>

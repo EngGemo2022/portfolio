@@ -1331,7 +1331,7 @@ body,
 
 /* Hover lift */
 .hover-lift {
-  transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.35s ease;
+  transition: transform 0.25s ease-out, box-shadow 0.25s ease-out;
 }
 
 .hover-lift:hover {
