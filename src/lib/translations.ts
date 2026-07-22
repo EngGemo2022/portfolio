@@ -243,7 +243,6 @@ export interface Translations {
   footerName: string;
   footerTitle: string;
   footerCopyright: string;
-  footerDesignBy: string;
 }
 
 export const translations: Record<Language, Translations> = {
@@ -477,7 +476,6 @@ export const translations: Record<Language, Translations> = {
     footerName: "Gamal Abdlhafez",
     footerTitle: "Web & Brand Designer",
     footerCopyright: "All rights reserved.",
-    footerDesignBy: "Designed and built by Gamal Abdlhafez",
   },
   ar: {
     navAbout: "حول",
@@ -709,6 +707,5 @@ export const translations: Record<Language, Translations> = {
     footerName: "جمال عبدالحافظ",
     footerTitle: "مصمم مواقع وهويات بصرية",
     footerCopyright: "جميع الحقوق محفوظة.",
-    footerDesignBy: "تصميم وتطوير جمال عبدالحافظ",
   },
 };

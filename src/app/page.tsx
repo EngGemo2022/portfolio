@@ -2001,20 +2001,9 @@ function Footer() {
             whileInView={{ opacity: 1, x: 0 }}
             className={`text-gray-500 text-xs sm:text-sm text-center ${isRTL ? 'md:text-left' : 'md:text-right'}`}
           >
-            © {new Date().getFullYear()} {t.footerName}. {t.footerCopyright}
+            © {new Date().getFullYear()} — {t.footerCopyright}
           </motion.p>
         </div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="text-center mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-[#d4af37]/10"
-        >
-          <p className="text-gray-500 text-xs">
-            {t.footerDesignBy}
-          </p>
-        </motion.div>
       </div>
 
       <AnimatePresence>
