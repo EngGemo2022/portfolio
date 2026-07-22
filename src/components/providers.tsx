@@ -108,6 +108,13 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     cachedInitialLanguage = language;
     document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
     document.documentElement.lang = language;
+    // The <title> Next.js renders server-side reflects only the initial
+    // (Arabic) locale — switching language client-side never touched it,
+    // so an English-mode visitor kept an Arabic browser-tab title.
+    document.title =
+      language === "ar"
+        ? "جمال عبدالحافظ | مصمم مواقع وهويات بصرية — الرياض"
+        : "Gamal Abdlhafez | Web & Brand Designer — Riyadh";
   }, [language]);
 
   const setLanguage = (lang: Language) => {

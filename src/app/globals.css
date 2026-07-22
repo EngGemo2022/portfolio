@@ -189,6 +189,13 @@ html {
 }
 
 /* Animated gold gradient text */
+/* Static gold-gradient text. Used on ~10 headings across the page — most
+   below the fold. It previously ran a continuous background-position
+   shimmer forever regardless of visibility; animating background-position
+   forces a repaint every frame (not compositor-only), which is exactly
+   the kind of always-on off-screen work Lighthouse flags as
+   non-composited animation and main-thread cost. The gold-gradient fill
+   itself is the visual identity; the sweep was decorative. */
 .gold-gradient-animated {
   background: linear-gradient(
     90deg,
@@ -202,16 +209,6 @@ html {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: shimmer 3s linear infinite;
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% center;
-  }
-  100% {
-    background-position: 200% center;
-  }
 }
 
 /* Gold border glow */
@@ -226,26 +223,6 @@ html {
     0 0 20px rgba(212, 175, 55, 0.3),
     0 0 30px rgba(212, 175, 55, 0.2),
     0 0 40px rgba(212, 175, 55, 0.1);
-}
-
-/* Pulse glow animation */
-@keyframes pulse-glow {
-  0%, 100% {
-    box-shadow: 
-      0 0 20px rgba(212, 175, 55, 0.4),
-      0 0 40px rgba(212, 175, 55, 0.2),
-      0 0 60px rgba(212, 175, 55, 0.1);
-  }
-  50% {
-    box-shadow: 
-      0 0 30px rgba(212, 175, 55, 0.6),
-      0 0 60px rgba(212, 175, 55, 0.4),
-      0 0 90px rgba(212, 175, 55, 0.2);
-  }
-}
-
-.pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
 }
 
 /* Subtle border */
@@ -560,20 +537,6 @@ html {
   background: inherit;
   filter: blur(8px);
   opacity: 0.5;
-}
-
-/* Skill badge glow */
-@keyframes badge-glow {
-  0%, 100% {
-    box-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
-  }
-}
-
-.badge-glow {
-  animation: badge-glow 2s ease-in-out infinite;
 }
 
 /* Sparkle effect */
@@ -1135,14 +1098,13 @@ body,
   --border-subtle: rgba(255,255,255,0.08);
 }
 
-/* Premium hero text gradient */
+/* Premium hero text gradient — static (see .gold-gradient-animated note above) */
 .hero-gradient-text {
   background: linear-gradient(135deg, #ffffff 0%, #d4af37 40%, #f59e0b 60%, #ffffff 100%);
   background-size: 300% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: shimmer 5s linear infinite;
 }
 
 .light .hero-gradient-text {

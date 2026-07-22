@@ -131,7 +131,7 @@ function CertificateLightbox({
       >
         {/* Top bar */}
         <div className="flex items-center justify-between gap-3 px-4 sm:px-5 py-3 border-b border-[#d4af37]/15">
-          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 tabular-nums" aria-live="polite">
+          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 tabular-nums" aria-live="polite">
             {index + 1} / {items.length}
           </p>
           <button
@@ -170,8 +170,8 @@ function CertificateLightbox({
                 alt={`${title} — ${issuer}`}
                 fill
                 sizes="(max-width: 1024px) 100vw, 896px"
+                style={{ aspectRatio: `${cert.aspect}` }}
                 className="object-contain p-2 sm:p-4 select-none pointer-events-none"
-                priority
               />
             </div>
           </motion.div>
@@ -202,7 +202,7 @@ function CertificateLightbox({
               {title}
             </h3>
           </div>
-          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-3">
+          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-3">
             {issuer}
             {cert.platform ? ` · ${cert.platform}` : ""} · {t.certIssued}{" "}
             {language === "ar" ? cert.dateLabel.ar : cert.dateLabel.en}
@@ -326,6 +326,7 @@ export function CertificatesSection() {
                           alt={`${title} — ${issuer}`}
                           fill
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          style={{ aspectRatio: `${cert.aspect}` }}
                           className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                           loading="lazy"
                         />
@@ -361,7 +362,7 @@ export function CertificatesSection() {
                       <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white leading-snug mb-1.5 group-hover:text-[#d4af37] transition-colors">
                         {title}
                       </h3>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
                         {t.certIssued} {language === "ar" ? cert.dateLabel.ar : cert.dateLabel.en}
                       </p>
                     </div>
