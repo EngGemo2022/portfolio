@@ -246,6 +246,25 @@ function Navigation() {
   const reduceMotion = useReducedMotion();
   const closeMenu = useCallback(() => setIsMobileMenuOpen(false), []);
 
+  // Section links inside the menu: the browser's native hash-jump fires
+  // synchronously on click, but closing the menu (which lifts the scroll
+  // lock) is an async state update — the jump lands while the body is
+  // still `overflow: hidden` and gets silently dropped. Take over
+  // navigation explicitly instead of relying on the anchor's default.
+  const handleNavLinkClick = useCallback(
+    (href: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+      setIsMobileMenuOpen(false);
+      document.querySelector(href)?.scrollIntoView({
+        behavior: reduceMotion ? "auto" : "smooth",
+        block: "start",
+      });
+    },
+    [reduceMotion]
+  );
+
   useEffect(() => {
     if (!isMobileMenuOpen) return;
     const panel = panelRef.current;
@@ -528,7 +547,7 @@ function Navigation() {
                 <a
                   key={link.href}
                   href={link.href}
-                  onClick={closeMenu}
+                  onClick={handleNavLinkClick(link.href)}
                   aria-current={activeSection === link.href ? "true" : undefined}
                   className={`block py-3.5 text-base font-medium border-b border-[#d4af37]/10 transition-colors ${
                     activeSection === link.href
