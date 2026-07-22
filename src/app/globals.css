@@ -1469,6 +1469,13 @@ body,
    ACCESSIBILITY
    ============================================ */
 
+/* Mobile menu backdrop blur — declare the standard property only and let
+   the build tool emit the -webkit- prefix; hand-writing both makes the
+   minifier collapse them and drop the standard one (breaking Firefox). */
+.mobile-menu-backdrop {
+  backdrop-filter: blur(12px);
+}
+
 /* Skip-to-content link: hidden until keyboard-focused */
 .skip-link {
   position: fixed;

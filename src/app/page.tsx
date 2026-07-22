@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { motion, useInView, AnimatePresence, useScroll, useTransform, useSpring, MotionConfig } from "framer-motion";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { motion, useInView, AnimatePresence, useScroll, useTransform, useSpring, MotionConfig, useReducedMotion } from "framer-motion";
 import {
   Palette,
   Monitor,
@@ -240,11 +240,65 @@ function Navigation() {
     { href: "#contact", label: t.navContact },
   ];
 
+  // ── Mobile menu: scroll lock, focus trap, Escape, focus restore ──
+  const toggleButtonRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
+  const closeMenu = useCallback(() => setIsMobileMenuOpen(false), []);
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    const panel = panelRef.current;
+
+    // Lock body scroll without losing position; compensate for the
+    // disappearing scrollbar so content doesn't shift horizontally.
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    const previousOverflow = document.body.style.overflow;
+    const previousPadding = document.body.style.paddingRight;
+    document.body.style.overflow = "hidden";
+    if (scrollbarWidth > 0) document.body.style.paddingRight = `${scrollbarWidth}px`;
+
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setIsMobileMenuOpen(false);
+      } else if (e.key === "Tab" && panel) {
+        const focusable = Array.from(
+          panel.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        const active = document.activeElement as HTMLElement | null;
+        if (e.shiftKey && (active === first || !panel.contains(active))) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && (active === last || !panel.contains(active))) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", handleKey);
+    const frame = requestAnimationFrame(() => {
+      panel?.querySelector<HTMLElement>("[data-menu-close]")?.focus();
+    });
+
+    return () => {
+      document.removeEventListener("keydown", handleKey);
+      cancelAnimationFrame(frame);
+      document.body.style.overflow = previousOverflow;
+      document.body.style.paddingRight = previousPadding;
+      toggleButtonRef.current?.focus();
+    };
+  }, [isMobileMenuOpen]);
+
   const toggleLanguage = () => {
     setLanguage(language === "en" ? "ar" : "en");
   };
 
   return (
+    <>
     <motion.nav
       aria-label="Main navigation"
       initial={{ y: -100 }}
@@ -385,6 +439,7 @@ function Navigation() {
             </motion.button>
 
             <motion.button
+              ref={toggleButtonRef}
               className="text-gray-700 dark:text-white p-2"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
@@ -417,34 +472,93 @@ function Navigation() {
           </div>
         </div>
 
-        {/* Mobile Menu */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              id="mobile-nav-menu"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="lg:hidden mt-4 pb-4"
-            >
-              {navLinks.map((link, index) => (
-                <motion.a
-                  key={link.href}
-                  href={link.href}
-                  className="block py-3 text-gray-600 dark:text-gray-300 hover:text-[#d4af37] transition-colors border-b border-[#d4af37]/10 dark:border-[#d4af37]/10"
-                  initial={{ opacity: 0, x: isRTL ? 20 : -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {link.label}
-                </motion.a>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </motion.nav>
+
+    {/* Mobile menu overlay — sibling of the nav so `fixed` positioning is
+        never trapped inside the nav's animated transform context */}
+    <AnimatePresence>
+      {isMobileMenuOpen && (
+        <>
+          {/* Blurred backdrop: clicking it closes the menu */}
+          <motion.div
+            key="menu-backdrop"
+            className="lg:hidden fixed inset-0 z-[90] bg-black/60 mobile-menu-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: reduceMotion ? 0 : 0.25, ease: "easeOut" }}
+            onClick={closeMenu}
+            aria-hidden="true"
+          />
+
+          {/* Opaque panel */}
+          <motion.div
+            key="menu-panel"
+            ref={panelRef}
+            id="mobile-nav-menu"
+            role="dialog"
+            aria-modal="true"
+            aria-label={t.navName}
+            className={`lg:hidden fixed top-0 inset-x-0 z-[91] rounded-b-2xl border-b border-[#d4af37]/25 shadow-2xl max-h-[100dvh] overflow-y-auto ${
+              theme === "dark" ? "bg-[#0d0d0d]" : "bg-white"
+            }`}
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: reduceMotion ? 0 : 0.25, ease: "easeOut" }}
+          >
+            {/* Panel header: brand + close */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[#d4af37]/15">
+              <span className="text-xl font-bold gold-gradient-animated">{t.navName}</span>
+              <button
+                type="button"
+                data-menu-close
+                onClick={closeMenu}
+                aria-label="Close menu"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-200 hover:bg-[#d4af37]/10 hover:text-[#d4af37] transition-colors focus-visible:outline-2 focus-visible:outline-[#d4af37]"
+              >
+                <X className="w-5 h-5" aria-hidden="true" />
+              </button>
+            </div>
+
+            {/* Links */}
+            <nav aria-label={t.navName} className="px-5 py-2">
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={closeMenu}
+                  aria-current={activeSection === link.href ? "true" : undefined}
+                  className={`block py-3.5 text-base font-medium border-b border-[#d4af37]/10 transition-colors ${
+                    activeSection === link.href
+                      ? "text-[#d4af37]"
+                      : "text-gray-700 dark:text-gray-200 hover:text-[#d4af37]"
+                  }`}
+                >
+                  {link.label}
+                </a>
+              ))}
+            </nav>
+
+            {/* Primary CTA */}
+            <div className="px-5 pt-3 pb-6">
+              <a
+                href={`https://wa.me/966552962213?text=${encodeURIComponent(t.contactWaPrefill)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={closeMenu}
+                className="flex items-center justify-center gap-2 w-full py-3.5 rounded-full bg-[#25D366] text-white font-bold text-base"
+              >
+                <MessageCircle className="w-5 h-5" aria-hidden="true" />
+                {t.heroWhatsAppMe}
+              </a>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+    </>
   );
 }
 
